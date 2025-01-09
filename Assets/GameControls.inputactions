@@ -1,5 +1,5 @@
 {
-    "name": "New Controls",
+    "name": "GameControls",
     "maps": [
         {
             "name": "Player",
@@ -13,6 +13,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "65ba7079-de0b-4e07-9bc4-b3d54768128d",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Shoot",
+                    "type": "Button",
+                    "id": "0713b941-1da0-479b-81b9-f22ed3ea2a1b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -30,7 +48,7 @@
                 {
                     "name": "up",
                     "id": "1aa1f13c-e4c4-4020-93d1-e1f9dfdf36d3",
-                    "path": "",
+                    "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -41,7 +59,7 @@
                 {
                     "name": "down",
                     "id": "80af4666-bfff-4606-91b5-587bfcdf8463",
-                    "path": "",
+                    "path": "<Keyboard>/downArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -52,7 +70,7 @@
                 {
                     "name": "left",
                     "id": "37594628-d0f5-4bbf-85aa-838e4a91aedb",
-                    "path": "",
+                    "path": "<Keyboard>/leftArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -63,13 +81,35 @@
                 {
                     "name": "right",
                     "id": "3b67e221-8bbb-4035-8c7d-3e8d327bf6ae",
-                    "path": "",
+                    "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "46908a9a-1eff-42bc-9b2e-d1ffdaef8082",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bfcd1735-a240-4acc-95d0-8998ae4df329",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shoot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
