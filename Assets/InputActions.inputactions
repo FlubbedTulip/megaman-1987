@@ -1,5 +1,5 @@
 {
-    "name": "GameControls",
+    "name": "InputActions",
     "maps": [
         {
             "name": "Player",
@@ -35,7 +35,7 @@
             ],
             "bindings": [
                 {
-                    "name": "2D Vector",
+                    "name": "WASD",
                     "id": "ba4aa6a8-9c9d-4d31-900e-77fb2d8017a9",
                     "path": "2DVector",
                     "interactions": "",
