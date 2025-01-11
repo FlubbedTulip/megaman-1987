@@ -49,10 +49,10 @@ namespace Mega_man.States
 
             // 4. If near a ladder and pressing up => transition to climbing
             //    For example:
-            //    if (IsNearLadder(player) && player.MovementInput.y > 0.1f)
-            //    {
-            //        player.TransitionToState(player.ClimbingState);
-            //    }
+            if (player.IsNearLadder && player.MovementInput.y > 0.1f)
+            {
+                player.TransitionToState(player.ClimbingState);
+            }
         }
 
         private bool IsGrounded(PlayerMovement player)
@@ -60,5 +60,6 @@ namespace Mega_man.States
             // TODO: your grounded check (e.g., raycast, collision check, etc.)
             return player.Rb.linearVelocity.y == 0f; // naive example
         }
+        
     }
 }

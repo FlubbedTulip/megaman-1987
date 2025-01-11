@@ -37,6 +37,7 @@ namespace Mega_man.States
             {
                 // For example, if you let go of the ladder, fallback to in-air
                 player.TransitionToState(player.InAirState);
+                player.IsNearLadder = false;
             }
         }
     }

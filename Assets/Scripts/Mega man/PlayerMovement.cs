@@ -1,3 +1,4 @@
+using System;
 using Interfaces;
 using Mega_man.States;
 using UnityEngine;
@@ -45,6 +46,10 @@ namespace Mega_man
 
         // Jump input cache (if you want to store whether jump was pressed this frame)
         public bool JumpPressed { get; private set; }
+        
+        
+        public bool IsNearLadder { get; set; }
+
 
         private void Awake()
         {
@@ -66,6 +71,7 @@ namespace Mega_man
             _inputActions.Player.Move.canceled  += OnMoveCanceled;
 
             _inputActions.Player.Jump.performed += OnJumpPerformed;
+            
 
             // Start in OnGroundState by default (for example).
             TransitionToState(_onGroundState);
@@ -92,9 +98,7 @@ namespace Mega_man
             JumpPressed = false;
         }
 
-        /// <summary>
-        /// Method used by states to switch from one state to another
-        /// </summary>
+      
         public void TransitionToState(IMovementState newState)
         {
             if (_currentState != null)
@@ -110,7 +114,6 @@ namespace Mega_man
             }
         }
 
-        #region Input Callbacks
 
         private void OnMovePerformed(InputAction.CallbackContext context)
         {
@@ -128,6 +131,12 @@ namespace Mega_man
             JumpPressed = true;
         }
 
-        #endregion
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.CompareTag("Ladder"))
+            {
+                IsNearLadder = true;
+            }
+        }
     }
 }
