@@ -1,112 +1,133 @@
+using Interfaces;
+using Mega_man.States;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Mega_man
 {
-    public class PlayerMovement : MonoBehaviour
+    [RequireComponent(typeof(Rigidbody2D))]
+    public class PlayerMovement : MonoBehaviour, IMovementContext
     {
+        [Header("Movement Settings")]
         [SerializeField] private float speed = 5f;
         [SerializeField] private float jumpForce = 10f;
-        [SerializeField] private LayerMask groundLayer;
+        
+        [Header("State Machine")]
+        // Optionally store references to states directly in the inspector, or create them in code.
+        private IMovementState _onGroundState;
+        private IMovementState _inAirState;
+        private IMovementState _climbingState;
+
+        private IMovementState _currentState;
 
         private InputActions _inputActions;
-        private Vector2 _movement;
         private Rigidbody2D _rb;
-        private bool _isGrounded;
-        private PlayerState _currentState = PlayerState.Normal;
+
+        // The interface property from IMovementContext
+        public float GravityScale
+        {
+            get => _rb.gravityScale;
+            set => _rb.gravityScale = value;
+        }
+
+        // Expose read-only references to the states so states can do transitions.
+        public IMovementState OnGroundState  => _onGroundState;
+        public IMovementState InAirState     => _inAirState;
+        public IMovementState ClimbingState  => _climbingState;
+
+        // Additional data from context that states might need
+        public Rigidbody2D Rb => _rb;
+        public float Speed => speed;
+        public float JumpForce => jumpForce;
+        
+        // Movement input cache
+        public Vector2 MovementInput { get; private set; }
+
+        // Jump input cache (if you want to store whether jump was pressed this frame)
+        public bool JumpPressed { get; private set; }
 
         private void Awake()
         {
-            Debug.Log("Awake called: Initializing Input Actions");
-            _inputActions = new InputActions();
             _rb = GetComponent<Rigidbody2D>();
+            _inputActions = new InputActions();
+
+            // Initialize states
+            _onGroundState = new OnGroundState();
+            _inAirState    = new InAirState();
+            _climbingState = new ClimbingState();
         }
 
         private void OnEnable()
         {
-            if (_inputActions == null)
-            {
-                Debug.LogWarning("_inputActions was null. Initializing in OnEnable.");
-                _inputActions = new InputActions();
-            }
-
             _inputActions.Player.Enable();
-            _inputActions.Player.Jump.performed -= OnJump; // Prevent duplicate bindings
-            _inputActions.Player.Jump.performed += OnJump;
-        }
 
+            // Subscribe to input events
+            _inputActions.Player.Move.performed += OnMovePerformed;
+            _inputActions.Player.Move.canceled  += OnMoveCanceled;
+
+            _inputActions.Player.Jump.performed += OnJumpPerformed;
+
+            // Start in OnGroundState by default (for example).
+            TransitionToState(_onGroundState);
+        }
 
         private void OnDisable()
         {
-            if (_inputActions != null)
-            {
-                _inputActions.Player.Jump.performed -= OnJump;
-                _inputActions.Player.Disable();
-            }
+            _inputActions.Player.Disable();
+
+            // Unsubscribe from input events
+            _inputActions.Player.Move.performed -= OnMovePerformed;
+            _inputActions.Player.Move.canceled  -= OnMoveCanceled;
+
+            _inputActions.Player.Jump.performed -= OnJumpPerformed;
         }
 
         private void Update()
         {
-            // Check if grounded
-            _isGrounded = Physics2D.OverlapCircle(transform.position, 0.1f, groundLayer);
+            // Each state will handle logic in its Update method
+            _currentState.Update(this);
 
-            switch (_currentState)
+            // Reset JumpPressed so we only handle jump once per frame 
+            // (if your logic requires it).
+            JumpPressed = false;
+        }
+
+        /// <summary>
+        /// Method used by states to switch from one state to another
+        /// </summary>
+        public void TransitionToState(IMovementState newState)
+        {
+            if (_currentState != null)
             {
-                case PlayerState.Normal:
-                    HandleNormalMovement();
-                    break;
-                case PlayerState.ClimbingLadder:
-                    HandleClimbingMovement();
-                    break;
+                _currentState.ExitState(this);
+            }
+
+            _currentState = newState;
+
+            if (_currentState != null)
+            {
+                _currentState.EnterState(this);
             }
         }
 
-        private void HandleNormalMovement()
+        #region Input Callbacks
+
+        private void OnMovePerformed(InputAction.CallbackContext context)
         {
-            _movement = _inputActions.Player.Move.ReadValue<Vector2>();
-            _rb.linearVelocity = new Vector2(_movement.x * speed, _rb.linearVelocity.y);
+            MovementInput = context.ReadValue<Vector2>();
         }
 
-        private void HandleClimbingMovement()
+        private void OnMoveCanceled(InputAction.CallbackContext context)
         {
-            _movement = _inputActions.Player.Move.ReadValue<Vector2>();
-            _rb.linearVelocity = new Vector2(0, _movement.y * speed);
+            MovementInput = Vector2.zero;
         }
 
-        private void OnJump(InputAction.CallbackContext context)
+        private void OnJumpPerformed(InputAction.CallbackContext context)
         {
-            if (_currentState == PlayerState.ClimbingLadder)
-            {
-                // Drop from ladder and jump
-                _currentState = PlayerState.Normal;
-                _rb.gravityScale = 1; // Re-enable gravity
-                _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, jumpForce);
-            }
-            else if (_currentState == PlayerState.Normal && _isGrounded)
-            {
-                // Normal jump
-                _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, jumpForce);
-            }
+            // Set a flag indicating jump was requested
+            JumpPressed = true;
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            if (other.CompareTag("Ladder"))
-            {
-                _currentState = PlayerState.ClimbingLadder;
-                _rb.gravityScale = 0; // Disable gravity
-                _rb.linearVelocity = Vector2.zero; // Stop any existing momentum
-            }
-        }
-
-        private void OnTriggerExit2D(Collider2D other)
-        {
-            if (other.CompareTag("Ladder"))
-            {
-                _currentState = PlayerState.Normal;
-                _rb.gravityScale = 1; // Re-enable gravity
-            }
-        }
+        #endregion
     }
-    
 }

@@ -444,7 +444,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_2
+      name: Idle_0
       rect:
         serializedVersion: 2
         x: 103
@@ -466,7 +466,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_3
+      name: Idle_1
       rect:
         serializedVersion: 2
         x: 133
@@ -488,7 +488,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_4
+      name: walk_0
       rect:
         serializedVersion: 2
         x: 160
@@ -510,7 +510,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_5
+      name: walk_1
       rect:
         serializedVersion: 2
         x: 188
@@ -532,7 +532,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_6
+      name: walk_2
       rect:
         serializedVersion: 2
         x: 218
@@ -554,7 +554,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_7
+      name: walk_3
       rect:
         serializedVersion: 2
         x: 240
@@ -576,7 +576,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_8
+      name: Jump
       rect:
         serializedVersion: 2
         x: 265
@@ -730,7 +730,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_15
+      name: Jump_Shoot
       rect:
         serializedVersion: 2
         x: 145
@@ -2635,6 +2635,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
+      Idle_0: 3189213741849266016
+      Idle_1: 5654680634506406565
+      Jump: 3827554633196208667
+      Jump_Shoot: -7230482324771620355
       Mega man_0: 4008717765914065660
       Mega man_1: -1721245764200563174
       Mega man_10: -6668803452805729778
@@ -2643,12 +2647,10 @@ TextureImporter:
       Mega man_12: -598930218268579634
       Mega man_13: -8560877537122705082
       Mega man_14: 5416382517862288334
-      Mega man_15: -7230482324771620355
       Mega man_16: 876653985588218287
       Mega man_17: -428399026674790451
       Mega man_18: -8724308024594977948
       Mega man_19: 4654594435481693767
-      Mega man_2: 3189213741849266016
       Mega man_20: 3915992537972020104
       Mega man_21: -3024621080983666533
       Mega man_22: 7469437914913742346
@@ -2659,7 +2661,6 @@ TextureImporter:
       Mega man_27: 4992190350231529017
       Mega man_28: 5471622514279018358
       Mega man_29: -8729920776495702927
-      Mega man_3: 5654680634506406565
       Mega man_30: -3924741941918885388
       Mega man_31: 9121116470849352013
       Mega man_32: -9206640111914008921
@@ -2670,7 +2671,6 @@ TextureImporter:
       Mega man_37: 7757932464477917814
       Mega man_38: -5535876585650984595
       Mega man_39: -5375505335685941710
-      Mega man_4: 3496249779223043099
       Mega man_40: -5960454966407350934
       Mega man_41: -4375028679944755698
       Mega man_42: -3541009851616001318
@@ -2681,7 +2681,6 @@ TextureImporter:
       Mega man_47: 5940840961561917629
       Mega man_48: 1280369054104088607
       Mega man_49: 1546037124008454573
-      Mega man_5: -5907743348407768944
       Mega man_50: -1334025386536505247
       Mega man_51: -2623519485105492317
       Mega man_52: -5472454140090011801
@@ -2692,7 +2691,6 @@ TextureImporter:
       Mega man_57: 4268011506014999833
       Mega man_58: 8085121496932531623
       Mega man_59: -7782690530827203490
-      Mega man_6: 374161860854462911
       Mega man_60: -639199895118463635
       Mega man_61: 6489517162217071776
       Mega man_62: 4796382614801186902
@@ -2703,7 +2701,6 @@ TextureImporter:
       Mega man_67: -4753151123227271451
       Mega man_68: -6361605717390303538
       Mega man_69: -2199437635910090093
-      Mega man_7: 609635160584556671
       Mega man_70: 913826790100456142
       Mega man_71: -6587621896216039211
       Mega man_72: 1648354570182225808
@@ -2714,7 +2711,6 @@ TextureImporter:
       Mega man_77: -624556418611591572
       Mega man_78: 310701439911109191
       Mega man_79: 5932218471814067840
-      Mega man_8: 3827554633196208667
       Mega man_80: 356615546015414581
       Mega man_81: -1399185298391210474
       Mega man_82: -8541142862899703173
@@ -2736,6 +2732,10 @@ TextureImporter:
       Mega man_97: 9092345446404471359
       Mega man_98: 6811575099821285726
       Mega man_99: -2861862283032834215
+      walk_0: 3496249779223043099
+      walk_1: -5907743348407768944
+      walk_2: 374161860854462911
+      walk_3: 609635160584556671
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
