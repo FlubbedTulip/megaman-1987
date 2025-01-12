@@ -11,7 +11,14 @@ namespace Mega_man
     {
         [Header("Movement Settings")]
         [SerializeField] private float speed = 5f;
-        [SerializeField] private float jumpForce = 10f;
+    
+        [Header("Jump Settings")]
+        [SerializeField] private float jumpForce = 10f;          // Initial jump velocity
+        [SerializeField] private float jumpBoost = 20f;          // Upward force applied per second while holding jump
+        [SerializeField] private float maxJumpHoldTime = 0.2f;   // How long you can hold jump to keep boosting
+        [SerializeField] private float maxUpwardVelocity = 14f;  // Optional: clamp upward speed
+        [SerializeField] private float normalGravityScale = 0.2f;
+
         
         [Header("State Machine")]
         // Optionally store references to states directly in the inspector, or create them in code.
@@ -36,19 +43,23 @@ namespace Mega_man
         public IMovementState InAirState     => _inAirState;
         public IMovementState ClimbingState  => _climbingState;
 
-        // Additional data from context that states might need
-        public Rigidbody2D Rb => _rb;
+        // For states to access
         public float Speed => speed;
         public float JumpForce => jumpForce;
+        public float JumpBoost => jumpBoost;
+        public float MaxJumpHoldTime => maxJumpHoldTime;
+        public float NormalGravityScale => normalGravityScale;
+        
+        public float MaxUpwardVelocity => maxUpwardVelocity;
         
         // Movement input cache
         public Vector2 MovementInput { get; private set; }
-
-        // Jump input cache (if you want to store whether jump was pressed this frame)
         public bool JumpPressed { get; private set; }
-        
-        
+        public bool JumpHeld { get; private set; }  
         public bool IsNearLadder { get; set; }
+        
+        public Rigidbody2D Rb => _rb;
+
 
 
         private void Awake()
@@ -70,10 +81,11 @@ namespace Mega_man
             _inputActions.Player.Move.performed += OnMovePerformed;
             _inputActions.Player.Move.canceled  += OnMoveCanceled;
 
-            _inputActions.Player.Jump.performed += OnJumpPerformed;
+            _inputActions.Player.Jump.started += OnJumpStarted;
+            _inputActions.Player.Jump.canceled += OnJumpCanceled;
             
 
-            // Start in OnGroundState by default (for example).
+            // Start in OnGroundState by default.
             TransitionToState(_onGroundState);
         }
 
@@ -85,7 +97,8 @@ namespace Mega_man
             _inputActions.Player.Move.performed -= OnMovePerformed;
             _inputActions.Player.Move.canceled  -= OnMoveCanceled;
 
-            _inputActions.Player.Jump.performed -= OnJumpPerformed;
+            _inputActions.Player.Jump.started += OnJumpStarted;
+            _inputActions.Player.Jump.canceled += OnJumpCanceled;
         }
 
         private void Update()
@@ -96,6 +109,9 @@ namespace Mega_man
             // Reset JumpPressed so we only handle jump once per frame 
             // (if your logic requires it).
             JumpPressed = false;
+            
+            // print(_rb.gravityScale);
+            // print(JumpHeld);
         }
 
       
@@ -124,11 +140,21 @@ namespace Mega_man
         {
             MovementInput = Vector2.zero;
         }
-
-        private void OnJumpPerformed(InputAction.CallbackContext context)
+        
+        
+        
+        private void OnJumpStarted(InputAction.CallbackContext context)
         {
-            // Set a flag indicating jump was requested
+            // A "one-frame" jump press
             JumpPressed = true;
+            // Also set JumpHeld = true when the button is pressed
+            JumpHeld = true;
+        }
+
+        private void OnJumpCanceled(InputAction.CallbackContext context)
+        {
+            // The button is released
+            JumpHeld = false;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
