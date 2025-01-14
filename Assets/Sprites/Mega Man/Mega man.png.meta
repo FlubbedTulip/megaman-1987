@@ -642,7 +642,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_11
+      name: shoot
       rect:
         serializedVersion: 2
         x: 13
@@ -664,7 +664,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_12
+      name: RunShoot1
       rect:
         serializedVersion: 2
         x: 49
@@ -686,7 +686,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_13
+      name: RunShoot2
       rect:
         serializedVersion: 2
         x: 83
@@ -708,7 +708,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Mega man_14
+      name: RunShoot3
       rect:
         serializedVersion: 2
         x: 112
@@ -730,7 +730,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Jump_Shoot
+      name: JumpShoot
       rect:
         serializedVersion: 2
         x: 145
@@ -2638,15 +2638,11 @@ TextureImporter:
       Idle_0: 3189213741849266016
       Idle_1: 5654680634506406565
       Jump: 3827554633196208667
-      Jump_Shoot: -7230482324771620355
+      JumpShoot: -7230482324771620355
       Mega man_0: 4008717765914065660
       Mega man_1: -1721245764200563174
       Mega man_10: -6668803452805729778
       Mega man_100: 1445846260113544408
-      Mega man_11: -7012307194104574371
-      Mega man_12: -598930218268579634
-      Mega man_13: -8560877537122705082
-      Mega man_14: 5416382517862288334
       Mega man_16: 876653985588218287
       Mega man_17: -428399026674790451
       Mega man_18: -8724308024594977948
@@ -2732,6 +2728,10 @@ TextureImporter:
       Mega man_97: 9092345446404471359
       Mega man_98: 6811575099821285726
       Mega man_99: -2861862283032834215
+      RunShoot1: -598930218268579634
+      RunShoot2: -8560877537122705082
+      RunShoot3: 5416382517862288334
+      shoot: -7012307194104574371
       walk_0: 3496249779223043099
       walk_1: -5907743348407768944
       walk_2: 374161860854462911
