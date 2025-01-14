@@ -1,72 +1,57 @@
 using System.Collections;
 using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.InputSystem;
 
-public class CameraTransition : MonoBehaviour
+public class CameraSwitcher : MonoBehaviour
 {
-    public CinemachineCamera virtualCamera;
-    public float transitionDuration = 2f;
+    public CinemachineCamera currentCamera; // Assign the starting camera in the Inspector
+    public CinemachineCamera targetCamera; // Assign the target camera in the Inspector
+    public float transitionDuration = 1f; // Total duration of the transition
+    [SerializeField] private Transform playerTransform;
+    [SerializeField] private Rigidbody2D playerRb;
+    [SerializeField] private PlayerInput playerInput;
 
-    private bool isTransitioning = false;
+
+    private bool _isSwitching;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") && !isTransitioning)
+        if (collision.CompareTag("Player") && !_isSwitching)
         {
-            print("TESTTT");
-            StartCoroutine(HandleTransition(collision.transform));
+            StartCoroutine(SwitchCamera());
         }
     }
 
-    private IEnumerator HandleTransition(Transform player)
+    private IEnumerator SwitchCamera()
     {
-        isTransitioning = true;
+        _isSwitching = true;
 
-        // Freeze game
-        Time.timeScale = 0;
+        // Slow down the game
+        playerRb.linearDamping = 100f; 
+        playerInput.enabled = false;
         
-        // Temporarily disable Follow
-        Transform originalFollowTarget = virtualCamera.Follow;
-        virtualCamera.Follow = null;
-
-        // Determine new camera position
-        Vector3 newCameraPosition = virtualCamera.transform.position;
-
-        // if (CompareTag("Top Border trigger"))
-        // {
-        //     newCameraPosition.y += virtualCamera.Lens.OrthographicSize * 2;
-        //     player.position = new Vector2(player.position.x, player.position.y - virtualCamera.Lens.OrthographicSize * 2);
-        // }
-        if (CompareTag("Bottom Border Trigger"))
+        // Switch cameras
+        currentCamera.Priority = 10; // Lower priority
+        targetCamera.Priority = 11; // Higher priority
+        currentCamera.Follow = null;
+        targetCamera.Follow = playerTransform;
+        
+        float elapsed = 0f;
+        while (elapsed < transitionDuration)
         {
-            print("tes");
-            newCameraPosition.y -= virtualCamera.Lens.OrthographicSize * 2;
-        }
-
-        // Smoothly move the camera
-        float elapsedTime = 0f;
-        Vector3 startingPosition = virtualCamera.transform.position;
-
-        while (elapsedTime < transitionDuration)
-        {
-            virtualCamera.transform.position = Vector3.Lerp(startingPosition, newCameraPosition, elapsedTime / transitionDuration);
-            elapsedTime += Time.unscaledDeltaTime;
+            elapsed += Time.deltaTime;
             yield return null;
         }
 
-        virtualCamera.transform.position = newCameraPosition;
+        // Restore normal game speed
+        playerRb.linearDamping = 0f; 
+        playerInput.enabled = true;
 
-        // Force Cinemachine to update to the new camera position
-        CinemachineBrain cinemachineBrain = Camera.main.GetComponent<CinemachineBrain>();
-        cinemachineBrain.ManualUpdate();
 
-        // Unfreeze game
-        Time.timeScale = 1;
+        // Update the current camera reference
+        currentCamera = targetCamera;
 
-        // Re-enable Follow
-        virtualCamera.Follow = originalFollowTarget;
-        
-        isTransitioning = false;
+        _isSwitching = false;
     }
-    
 }

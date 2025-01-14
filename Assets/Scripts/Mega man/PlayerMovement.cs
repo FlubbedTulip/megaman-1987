@@ -106,12 +106,8 @@ namespace Mega_man
             // Each state will handle logic in its Update method
             _currentState.Update(this);
 
-            // Reset JumpPressed so we only handle jump once per frame 
-            // (if your logic requires it).
+            // Reset JumpPressed so we only handle jump once per frame.
             JumpPressed = false;
-            
-            // print(_rb.gravityScale);
-            // print(JumpHeld);
         }
 
       
