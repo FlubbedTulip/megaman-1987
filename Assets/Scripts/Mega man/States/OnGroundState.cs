@@ -22,6 +22,7 @@ namespace Mega_man.States
             Vector2 velocity = player.Rb.linearVelocity;
             velocity.x = player.MovementInput.x * player.Speed;
             player.Rb.linearVelocity = velocity;
+            PlayerAnimationManager.SetIsRunning(player.Rb.linearVelocity.x != 0);
 
             // If jump is pressed, apply initial jump force and go to InAirState
             if (player.JumpPressed)

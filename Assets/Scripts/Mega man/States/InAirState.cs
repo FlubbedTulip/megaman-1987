@@ -11,6 +11,9 @@ namespace Mega_man.States
 
         public void EnterState(IMovementContext context)
         {
+            //set animation
+            PlayerAnimationManager.SetIsJumping(true);
+            
             var player = (PlayerMovement)context;
             
             // We just transitioned into the air. Could be from jumping or falling.
@@ -36,6 +39,8 @@ namespace Mega_man.States
         public void ExitState(IMovementContext context)
         {
             // Any cleanup logic when exiting air state.
+            PlayerAnimationManager.SetIsJumping(false);
+
         }
 
         public void Update(IMovementContext context)

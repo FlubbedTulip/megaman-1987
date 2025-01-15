@@ -30,6 +30,9 @@ namespace Mega_man
 
         private InputActions _inputActions;
         private Rigidbody2D _rb;
+        
+        private SpriteRenderer _spriteRenderer;
+        private bool _isFacingRight = true;
 
         // The interface property from IMovementContext
         public float GravityScale
@@ -71,6 +74,8 @@ namespace Mega_man
             _onGroundState = new OnGroundState();
             _inAirState    = new InAirState();
             _climbingState = new ClimbingState();
+            
+            _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         private void OnEnable()
@@ -105,12 +110,27 @@ namespace Mega_man
         {
             // Each state will handle logic in its Update method
             _currentState.Update(this);
+            if (_rb.linearVelocity.x < 0)
+            {
+                _isFacingRight = false;
+            }
+            else if (_rb.linearVelocity.x > 0)
+            {
+                _isFacingRight = true;
+            }
 
+            UpdateDiraction();
+            
             // Reset JumpPressed so we only handle jump once per frame.
             JumpPressed = false;
         }
 
-      
+        private void UpdateDiraction()
+        {
+            _spriteRenderer.flipX = !_isFacingRight;
+        }
+
+
         public void TransitionToState(IMovementState newState)
         {
             if (_currentState != null)

@@ -214,7 +214,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 43426440312272737, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1320411429}
   m_SourcePrefab: {fileID: 100100000, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
 --- !u!1 &353750765
 GameObject:
@@ -10677,6 +10680,11 @@ BoxCollider2D:
   m_AutoTiling: 1
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &1320411421 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 43426440312272737, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
+  m_PrefabInstance: {fileID: 281494811}
+  m_PrefabAsset: {fileID: 0}
 --- !u!50 &1320411425 stripped
 Rigidbody2D:
   m_CorrespondingSourceObject: {fileID: 2429826507754034601, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
@@ -10687,6 +10695,18 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5297352979176081866, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
   m_PrefabInstance: {fileID: 281494811}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1320411429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320411421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b94bb6f9b1308249af606b40cb6c25d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1403318423
 GameObject:
   m_ObjectHideFlags: 0
