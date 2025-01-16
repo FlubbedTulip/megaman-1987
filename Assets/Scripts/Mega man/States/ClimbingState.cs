@@ -5,39 +5,46 @@ namespace Mega_man.States
 {
     public class ClimbingState : IMovementState
     {
-        public void EnterState(IMovementContext movementContext)
+        public void EnterState(IMovementContext context)
         {
-            var player = (PlayerMovement)movementContext;
-            // Possibly disable gravity while climbing
+            var player = (PlayerMovement)context;
+            // Disable gravity while climbing
             player.GravityScale = 0f;
-            // Maybe set rigidbody constraints, etc.
+            // set a climbing animation
+            //PlayerAnimationManager.SetIsClimbing(true);
         }
 
-        public void ExitState(IMovementContext movementContext)
+        public void ExitState(IMovementContext context)
         {
-            var player = (PlayerMovement)movementContext;
+            var player = (PlayerMovement)context;
             // Re-enable gravity
-            player.GravityScale = 1f;
+            player.GravityScale = player.NormalGravityScale;
+            // Turn off climbing animation
+            //PlayerAnimationManager.SetIsClimbing(false);
         }
 
-        public void Update(IMovementContext movementContext)
+        public void UpdateState(IMovementContext context)
         {
-            var player = (PlayerMovement)movementContext;
+            var player = (PlayerMovement)context;
 
-            // Climbing uses vertical input to move up or down
+            // Climb using vertical input
             Vector2 velocity = player.Rb.linearVelocity;
             velocity.y = player.MovementInput.y * player.Speed;
-            velocity.x = 0f; // Keep horizontal velocity zero while climbing
+            velocity.x = 0f; 
             player.Rb.linearVelocity = velocity;
 
-            // If the player is not pressing up/down or is no longer on a ladder,
-            // transition out of climbing
-            // e.g. if (NotOnLadder(player)) ...
-            if (Mathf.Abs(player.MovementInput.y) < 0.1f)
+            // If player stops pressing up/down or is no longer near ladder, exit
+            if (Mathf.Abs(player.MovementInput.y) < 0.1f || !player.IsNearLadder)
             {
-                // For example, if you let go of the ladder, fallback to in-air
+                // If we just let go, we probably fall => InAirState
                 player.TransitionToState(player.InAirState);
                 player.IsNearLadder = false;
+            }
+            
+            // If we press jump on the ladder, we might want to jump off:
+            if (player.JumpPressed)
+            {
+                player.TransitionToState(player.InAirState);
             }
         }
     }

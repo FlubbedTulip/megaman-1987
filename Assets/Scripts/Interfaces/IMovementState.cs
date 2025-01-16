@@ -4,6 +4,6 @@ namespace Interfaces
     {
         void EnterState(IMovementContext movementContext);
         void ExitState(IMovementContext movementContext);
-        void Update(IMovementContext movementContext);
+        void UpdateState(IMovementContext movementContext);
     }
 }

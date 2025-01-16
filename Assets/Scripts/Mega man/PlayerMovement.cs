@@ -1,4 +1,3 @@
-using System;
 using Interfaces;
 using Mega_man.States;
 using UnityEngine;
@@ -6,147 +5,152 @@ using UnityEngine.InputSystem;
 
 namespace Mega_man
 {
-    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer))]
     public class PlayerMovement : MonoBehaviour, IMovementContext
     {
         [Header("Movement Settings")]
         [SerializeField] private float speed = 5f;
-    
-        [Header("Jump Settings")]
-        [SerializeField] private float jumpForce = 10f;          // Initial jump velocity
-        [SerializeField] private float jumpBoost = 20f;          // Upward force applied per second while holding jump
-        [SerializeField] private float maxJumpHoldTime = 0.2f;   // How long you can hold jump to keep boosting
-        [SerializeField] private float maxUpwardVelocity = 14f;  // Optional: clamp upward speed
-        [SerializeField] private float normalGravityScale = 0.2f;
 
+        [Header("Jump Settings")]
+        [SerializeField] private float jumpForce = 10f;        // Initial jump velocity
+        [SerializeField] private float jumpBoost = 20f;        // Upward force per second while holding jump
+        [SerializeField] private float maxJumpHoldTime = 0.2f; // How long you can hold jump
+        [SerializeField] private float maxUpwardVelocity = 14f;// Optional velocity clamp
+        [SerializeField] private float normalGravityScale = 1f;
         
-        [Header("State Machine")]
-        // Optionally store references to states directly in the inspector, or create them in code.
-        private IMovementState _onGroundState;
+       
+
+        // States
+        private IMovementState _groundedState;
         private IMovementState _inAirState;
         private IMovementState _climbingState;
-
         private IMovementState _currentState;
 
+        // Input
         private InputActions _inputActions;
-        private Rigidbody2D _rb;
-        
-        private SpriteRenderer _spriteRenderer;
-        private bool _isFacingRight = true;
 
-        // The interface property from IMovementContext
+        // Cached components
+        private Rigidbody2D _rb;
+        private SpriteRenderer _spriteRenderer;
+        private PlayerShoot _playerShooting;
+        private PlayerAnimationController _animController;
+
+
+        // IMovementContext property
         public float GravityScale
         {
             get => _rb.gravityScale;
             set => _rb.gravityScale = value;
         }
 
-        // Expose read-only references to the states so states can do transitions.
-        public IMovementState OnGroundState  => _onGroundState;
-        public IMovementState InAirState     => _inAirState;
-        public IMovementState ClimbingState  => _climbingState;
+        // Expose states (used inside states for transitions)
+        public IMovementState GroundedState => _groundedState;
+        public IMovementState InAirState   => _inAirState;
+        public IMovementState ClimbingState=> _climbingState;
 
-        // For states to access
-        public float Speed => speed;
-        public float JumpForce => jumpForce;
-        public float JumpBoost => jumpBoost;
-        public float MaxJumpHoldTime => maxJumpHoldTime;
+        // Movement parameters read by states
+        public float Speed            => speed;
+        public float JumpForce        => jumpForce;
+        public float JumpBoost        => jumpBoost;
+        public float MaxJumpHoldTime  => maxJumpHoldTime;
+        public float MaxUpwardVelocity=> maxUpwardVelocity;
         public float NormalGravityScale => normalGravityScale;
         
-        public float MaxUpwardVelocity => maxUpwardVelocity;
         
-        // Movement input cache
-        public Vector2 MovementInput { get; private set; }
-        public bool JumpPressed { get; private set; }
-        public bool JumpHeld { get; private set; }  
-        public bool IsNearLadder { get; set; }
+        public PlayerAnimationController Anim => _animController;
+
+
+        // Public properties for user input
+        public Vector2 MovementInput  { get; private set; }
+        public bool    JumpPressed    { get; private set; }
+        public bool    JumpHeld       { get; private set; }
+        public bool    IsNearLadder   { get; set; }
+        private bool IsFacingRight { get; set; } = true; 
         
+        
+        
+
         public Rigidbody2D Rb => _rb;
 
-
+        
 
         private void Awake()
         {
+            // Components
             _rb = GetComponent<Rigidbody2D>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
+            _playerShooting = GetComponent<PlayerShoot>();
+            _animController = GetComponent<PlayerAnimationController>();
+
+
+            // Input
             _inputActions = new InputActions();
 
-            // Initialize states
-            _onGroundState = new OnGroundState();
+            // States
+            _groundedState = new GroundedState();
             _inAirState    = new InAirState();
             _climbingState = new ClimbingState();
-            
-            _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         private void OnEnable()
         {
             _inputActions.Player.Enable();
 
-            // Subscribe to input events
+            // Subscribe input
             _inputActions.Player.Move.performed += OnMovePerformed;
             _inputActions.Player.Move.canceled  += OnMoveCanceled;
+            _inputActions.Player.Jump.started   += OnJumpStarted;
+            _inputActions.Player.Jump.canceled  += OnJumpCanceled;
+            _inputActions.Player.Shoot.started += OnShootStarted;
 
-            _inputActions.Player.Jump.started += OnJumpStarted;
-            _inputActions.Player.Jump.canceled += OnJumpCanceled;
-            
 
-            // Start in OnGroundState by default.
-            TransitionToState(_onGroundState);
+            // Start in grounded
+            TransitionToState(_groundedState);
         }
 
         private void OnDisable()
         {
             _inputActions.Player.Disable();
 
-            // Unsubscribe from input events
-            _inputActions.Player.Move.performed -= OnMovePerformed;
-            _inputActions.Player.Move.canceled  -= OnMoveCanceled;
+            // Unsubscribe properly ( -= )
+            _inputActions.Player.Move.performed  -= OnMovePerformed;
+            _inputActions.Player.Move.canceled   -= OnMoveCanceled;
+            _inputActions.Player.Jump.started    -= OnJumpStarted;
+            _inputActions.Player.Jump.canceled   -= OnJumpCanceled;
+            _inputActions.Player.Shoot.started -= OnShootStarted;
 
-            _inputActions.Player.Jump.started += OnJumpStarted;
-            _inputActions.Player.Jump.canceled += OnJumpCanceled;
         }
 
         private void Update()
         {
-            // Each state will handle logic in its Update method
-            _currentState.Update(this);
-            if (_rb.linearVelocity.x < 0)
-            {
-                _isFacingRight = false;
-            }
-            else if (_rb.linearVelocity.x > 0)
-            {
-                _isFacingRight = true;
-            }
+            // Let the current state handle logic
+            _currentState.UpdateState(this);
 
-            UpdateDiraction();
-            
-            // Reset JumpPressed so we only handle jump once per frame.
+            // Face direction
+            UpdateFacingDirection();
+
+            // Reset JumpPressed so it's one-frame only
             JumpPressed = false;
         }
 
-        private void UpdateDiraction()
+        private void UpdateFacingDirection()
         {
-            _spriteRenderer.flipX = !_isFacingRight;
-        }
+            // if velocity.x < 0 => face left, if velocity.x > 0 => face right
+            float vx = _rb.linearVelocity.x;
+            if (vx < -0.01f)  IsFacingRight = false;
+            if (vx >  0.01f)  IsFacingRight = true;
 
+            _spriteRenderer.flipX = !IsFacingRight;
+        }
 
         public void TransitionToState(IMovementState newState)
         {
-            if (_currentState != null)
-            {
-                _currentState.ExitState(this);
-            }
-
+            _currentState?.ExitState(this);
             _currentState = newState;
-
-            if (_currentState != null)
-            {
-                _currentState.EnterState(this);
-            }
+            _currentState?.EnterState(this);
         }
 
-
+        // Input Callbacks
         private void OnMovePerformed(InputAction.CallbackContext context)
         {
             MovementInput = context.ReadValue<Vector2>();
@@ -156,28 +160,38 @@ namespace Mega_man
         {
             MovementInput = Vector2.zero;
         }
-        
-        
-        
+
         private void OnJumpStarted(InputAction.CallbackContext context)
         {
-            // A "one-frame" jump press
             JumpPressed = true;
-            // Also set JumpHeld = true when the button is pressed
             JumpHeld = true;
         }
 
         private void OnJumpCanceled(InputAction.CallbackContext context)
         {
-            // The button is released
             JumpHeld = false;
         }
+        
+        private void OnShootStarted(InputAction.CallbackContext context)
+        {
+            _animController.SetShooting();
+            _playerShooting.Shoot(IsFacingRight);
+        }
 
+        // Example: Ladder trigger detection
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Ladder"))
             {
                 IsNearLadder = true;
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if (other.CompareTag("Ladder"))
+            {
+                IsNearLadder = false;
             }
         }
     }

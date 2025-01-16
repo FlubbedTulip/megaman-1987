@@ -3,28 +3,38 @@ using UnityEngine;
 
 namespace Mega_man.States
 {
-    public class OnGroundState : IMovementState
+    public class GroundedState : IMovementState
     {
         public void EnterState(IMovementContext context)
         {
-            context.GravityScale = context is PlayerMovement pm
-                ? pm.NormalGravityScale
-                : 1f;
+            // Example: set normal gravity
+            if (context is PlayerMovement player)
+            {
+                player.GravityScale = player.NormalGravityScale;
+                // Possibly set an animation
+                player.Anim.SetRunning(false);
+            }
         }
 
-        public void ExitState(IMovementContext context) { }
+        public void ExitState(IMovementContext context)
+        {
+            // Any cleanup: e.g., disable "running" animation
+        }
 
-        public void Update(IMovementContext context)
+        public void UpdateState(IMovementContext context)
         {
             var player = (PlayerMovement)context;
 
-            // Basic horizontal movement
+            // 1) Handle horizontal movement
             Vector2 velocity = player.Rb.linearVelocity;
             velocity.x = player.MovementInput.x * player.Speed;
             player.Rb.linearVelocity = velocity;
-            PlayerAnimationManager.SetIsRunning(player.Rb.linearVelocity.x != 0);
 
-            // If jump is pressed, apply initial jump force and go to InAirState
+            // 2) Update Running Animation
+            bool isMovingHorizontally = Mathf.Abs(velocity.x) > 0.01f;
+            player.Anim.SetRunning(isMovingHorizontally);
+
+            // 3) Check for Jump
             if (player.JumpPressed)
             {
                 velocity.y = player.JumpForce;
@@ -33,14 +43,14 @@ namespace Mega_man.States
                 return;
             }
 
-            // Example ground check
+            // 4) If not grounded (e.g. we stepped off a ledge), go in-air
             if (!IsGrounded(player))
             {
                 player.TransitionToState(player.InAirState);
                 return;
             }
 
-            // Check for ladder if needed
+            // 5) Ladder check
             if (player.IsNearLadder && player.MovementInput.y > 0.5f)
             {
                 player.TransitionToState(player.ClimbingState);
@@ -49,7 +59,8 @@ namespace Mega_man.States
 
         private bool IsGrounded(PlayerMovement player)
         {
-            // Implement a robust ground check (raycasts, OverlapCircle, etc.).
+            // Use a real ground check (raycast, overlap, etc.)
+            // For now, we use velocity.y near zero as a placeholder
             return Mathf.Abs(player.Rb.linearVelocity.y) < 0.01f;
         }
     }
