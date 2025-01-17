@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ladder
   - Bottom Border Trigger
+  - Enemy
   layers:
   - Default
   - TransparentFX
