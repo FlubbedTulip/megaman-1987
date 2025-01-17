@@ -7,7 +7,7 @@ namespace Projectiles
     public class MegaManBullet : MonoBehaviour , IPoolable
     {
         [SerializeField] private float speed = 10f;
-        private int _direction; // +1 for right, -1 for left
+        private int _direction; 
 
         
         public void Initialize(int direction)
@@ -22,24 +22,18 @@ namespace Projectiles
         
         private void OnTriggerEnter2D(Collider2D other)
         {
-            // If we ignore world terrain, presumably you have a layer collision matrix
-            // or the bullet's collider set to "IsTrigger" so it passes through terrain.
-            // Then you only detect enemies here:
-
+            
             if (other.CompareTag("Enemy"))
             {
-                // Damage the enemy, etc.
-                // ...
+                // TODO damage the player, animation, etc...
                 ReturnToPool();
             }
         }
         
         private void OnBecameInvisible()
         {
-            // This is a built-in Unity callback that triggers when the Renderer is no longer visible.
-            // If you want the bullet to vanish when off-screen:
+            //a built-in Unity callback that triggers when the Renderer is no longer visible.
             ReturnToPool();
-            Debug.Log("bullet returned");
         }
         
         private void ReturnToPool()
