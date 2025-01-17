@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Pools;
 using Projectiles;
@@ -7,29 +8,42 @@ namespace Enemies.Blaster
 {
     public class BlasterController : MonoBehaviour
     {
+        private static readonly int IsOpen = Animator.StringToHash("IsOpen");
+
         [Header("Timings")]
-        [SerializeField] private float closedDelay = 2f;      // Time spent closed
-        [SerializeField] private float openDuration = 1f;     // Time spent open (firing)
+        [SerializeField] private float closedDelay = 2f;
+        [SerializeField] private float openDuration = 1f;     
         
         [Header("Shooting")]
-        [SerializeField] private float shootCooldown = 0.2f;  // Delay between each bullet shot
-        [SerializeField] private Transform spawnPoint;        // Where bullets spawn
-        [SerializeField] private bool isFacingRight = true;   // Which way the Blaster is facing
+        [SerializeField] private float shootCooldown = 0.2f;  
+        [SerializeField] private Transform spawnPoint;       
+        [SerializeField] private bool isFacingRight = true;   
         
         [Header("References")]
-        [SerializeField] private Animator animator;           // Animator with open/close states
-        private bool _isOpen;                                 // Tracks if the blaster is open
-        private bool _isInvulnerable;                         // If you want to handle damage logic
+        [SerializeField] private Animator animator;           
+        private bool _isOpen;                                 
+        private bool _isInvulnerable;     
+        
+        private Coroutine _cycleRoutine;
 
-        private void Start()
+
+        private void OnEnable()
         {
-            // Start the main cycle
-            StartCoroutine(CycleRoutine());
+            // Restart the main cycle when the enemy is enabled
+            _cycleRoutine = StartCoroutine(CycleRoutine());
         }
 
-        /// <summary>
+        private void OnDisable()
+        {
+            // Stop the main cycle when the enemy is disabled
+            if (_cycleRoutine != null)
+            {
+                StopCoroutine(_cycleRoutine);
+                _cycleRoutine = null;
+            }
+        }
+        
         /// Main open/close cycle coroutine.
-        /// </summary>
         private IEnumerator CycleRoutine()
         {
             while (true)
@@ -41,34 +55,33 @@ namespace Enemies.Blaster
                 // 2) Open state
                 SetClosed(false);
                 
-                // Fire bullets immediately (or spread them over time)
+                // Fire bullets immediately
                 yield return StartCoroutine(FireBulletsRoutine());
                 
                 // Wait openDuration in open state
                 yield return new WaitForSeconds(openDuration);
             }
         }
-
-        /// <summary>
-        /// Toggles the Blaster's open/closed animations and states
-        /// </summary>
+        
+        
+        // Toggles the Blaster's open/closed animations and states
         private void SetClosed(bool closed)
         {
             _isOpen = !closed;
             _isInvulnerable = closed;  // If closed => can't take damage
-            animator.SetBool("IsOpen", _isOpen);
+            animator.SetBool(IsOpen, _isOpen);
         }
 
        
         // Fires 4 bullets in a half-circle pattern.
         private IEnumerator FireBulletsRoutine()
         {
+            yield return new WaitForSeconds(0.5f);
             int bulletCount = 4;
             float startAngle = 45f;
             float endAngle   = -45f;
             
             // If we're facing left, we flip angles horizontally
-            // so we can unify logic by always rotating from left to right
             float facingMultiplier = isFacingRight ? 1f : -1f;
 
             for (int i = 0; i < bulletCount; i++)
@@ -81,7 +94,6 @@ namespace Enemies.Blaster
                 angleDeg *= facingMultiplier;
 
                 // Base direction is "right" if facing right, "left" if facing left
-                // We'll use Vector2.right as "forward", rotate by angle
                 Vector2 baseDir = isFacingRight ? Vector2.right : Vector2.left;
                 Vector2 bulletDir = RotateByAngle(baseDir, angleDeg);
 
@@ -105,7 +117,7 @@ namespace Enemies.Blaster
         }
 
      
-        // Utility function to rotate a vector by some degrees in 2D
+        // Utility function to rotate a vector by some degrees
         private Vector2 RotateByAngle(Vector2 vector, float angleDeg)
         {
             float theta = angleDeg * Mathf.Deg2Rad;
@@ -117,5 +129,7 @@ namespace Enemies.Blaster
             float ry = vector.x * sin + vector.y * cos;
             return new Vector2(rx, ry);
         }
+
+        
     }
 }
