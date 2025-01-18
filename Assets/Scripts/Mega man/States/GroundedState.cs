@@ -1,5 +1,6 @@
 ﻿using Interfaces;
 using UnityEngine;
+using UnityEngine.InputSystem.Interactions;
 
 namespace Mega_man.States
 {
@@ -7,7 +8,7 @@ namespace Mega_man.States
     {
         public void EnterState(IMovementContext context)
         {
-            // Example: set normal gravity
+            //  set normal gravity
             if (context is PlayerMovement player)
             {
                 player.GravityScale = player.NormalGravityScale;
@@ -18,7 +19,7 @@ namespace Mega_man.States
 
         public void ExitState(IMovementContext context)
         {
-            // Any cleanup: e.g., disable "running" animation
+            
         }
 
         public void UpdateState(IMovementContext context)
@@ -51,16 +52,17 @@ namespace Mega_man.States
             }
 
             // 5) Ladder check
-            if (player.IsNearLadder && player.MovementInput.y > 0.5f)
+            if (player.IsNearLadder && player.MovementInput.y != 0)
             {
+                Debug.Log("switch to climbing");
                 player.TransitionToState(player.ClimbingState);
             }
         }
 
         private bool IsGrounded(PlayerMovement player)
         {
-            // Use a real ground check (raycast, overlap, etc.)
-            // For now, we use velocity.y near zero as a placeholder
+            // TODO ADD RAYCAST SYSTEM FOR BETTER DETECTION
+            // placeholder system
             return Mathf.Abs(player.Rb.linearVelocity.y) < 0.01f;
         }
     }

@@ -12,10 +12,10 @@ namespace Mega_man
         [SerializeField] private float speed = 5f;
 
         [Header("Jump Settings")]
-        [SerializeField] private float jumpForce = 10f;        // Initial jump velocity
-        [SerializeField] private float jumpBoost = 20f;        // Upward force per second while holding jump
-        [SerializeField] private float maxJumpHoldTime = 0.2f; // How long you can hold jump
-        [SerializeField] private float maxUpwardVelocity = 14f;// Optional velocity clamp
+        [SerializeField] private float jumpForce = 10f;         // Initial jump velocity
+        [SerializeField] private float jumpBoost = 20f;         // Upward force per second while holding jump
+        [SerializeField] private float maxJumpHoldTime = 0.2f;  // How long you can hold jump
+        [SerializeField] private float maxUpwardVelocity = 14f; //  velocity clamp
         [SerializeField] private float normalGravityScale = 1f;
         
        
@@ -34,6 +34,8 @@ namespace Mega_man
         private SpriteRenderer _spriteRenderer;
         private PlayerShoot _playerShooting;
         private PlayerAnimationController _animController;
+        private Vector2 lastLadderPosition;
+
 
 
         // IMovementContext property
@@ -55,8 +57,8 @@ namespace Mega_man
         public float MaxJumpHoldTime  => maxJumpHoldTime;
         public float MaxUpwardVelocity=> maxUpwardVelocity;
         public float NormalGravityScale => normalGravityScale;
-        
-        
+        public Vector2 LastLadderPosition => lastLadderPosition;
+        public Rigidbody2D Rb => _rb;
         public PlayerAnimationController Anim => _animController;
 
 
@@ -64,15 +66,13 @@ namespace Mega_man
         public Vector2 MovementInput  { get; private set; }
         public bool    JumpPressed    { get; private set; }
         public bool    JumpHeld       { get; private set; }
+        public Ladder CurrentLadder { get; private set; }
         public bool    IsNearLadder   { get; set; }
-        private bool IsFacingRight { get; set; } = true; 
-        
-        
+        public bool IsFacingRight { get; set; } = true; 
         
 
-        public Rigidbody2D Rb => _rb;
-
         
+
 
         private void Awake()
         {
@@ -131,6 +131,7 @@ namespace Mega_man
 
             // Reset JumpPressed so it's one-frame only
             JumpPressed = false;
+
         }
 
         private void UpdateFacingDirection()
@@ -178,20 +179,33 @@ namespace Mega_man
             _playerShooting.Shoot(IsFacingRight);
         }
 
-        // Example: Ladder trigger detection
+
         private void OnTriggerEnter2D(Collider2D other)
         {
+            // Check if we're colliding with something tagged "Ladder"
             if (other.CompareTag("Ladder"))
             {
                 IsNearLadder = true;
+                // Try to get the Ladder component from this collider or its parent
+                Ladder ladder = other.GetComponentInParent<Ladder>();
+                if (ladder != null)
+                {
+                    CurrentLadder = ladder;
+                }
             }
         }
 
-        private void OnTriggerExit2D(Collider2D other)
+            private void OnTriggerExit2D(Collider2D other)
         {
             if (other.CompareTag("Ladder"))
             {
                 IsNearLadder = false;
+                // If this exit belongs to the same ladder, clear the reference
+                Ladder ladder = other.GetComponentInParent<Ladder>();
+                if (ladder == CurrentLadder)
+                {
+                    CurrentLadder = null;
+                }
             }
         }
     }
