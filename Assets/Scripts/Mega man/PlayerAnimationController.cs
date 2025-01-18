@@ -10,6 +10,8 @@ namespace Mega_man
         private static readonly int Running = Animator.StringToHash("IsRunning");
         private static readonly int Jumping = Animator.StringToHash("IsJumping");
         private static readonly int Shooting = Animator.StringToHash("IsShooting");
+        private static readonly int Climbing = Animator.StringToHash("IsClimbing");
+
         
 
         public void SetRunning(bool isRunning)
@@ -25,6 +27,10 @@ namespace Mega_man
         public void SetShooting()
         {
             animator.SetTrigger(Shooting);
+        }
+
+        public void SetClimbing(bool isClimbing){
+            animator.SetBool(Climbing,isClimbing);
         }
     }
 }

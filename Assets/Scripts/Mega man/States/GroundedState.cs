@@ -12,7 +12,7 @@ namespace Mega_man.States
             if (context is PlayerMovement player)
             {
                 player.GravityScale = player.NormalGravityScale;
-                // Possibly set an animation
+                //set an animation
                 player.Anim.SetRunning(false);
             }
         }
@@ -52,11 +52,47 @@ namespace Mega_man.States
             }
 
             // 5) Ladder check
-            if (player.IsNearLadder && player.MovementInput.y != 0)
-            {
-                Debug.Log("switch to climbing");
-                player.TransitionToState(player.ClimbingState);
-            }
+           if (player.IsNearLadder && player.CurrentLadder != null)
+{
+    // We only climb if pressing Up (y > 0) AND we’re not already at or above the ladder top
+    // OR pressing Down (y < 0) AND we’re not already at or below the ladder bottom.
+    float playerY  = player.Rb.position.y;
+    float topY     = player.CurrentLadder.topPosition.position.y;
+    float bottomY  = player.CurrentLadder.bottomPosition.position.y;
+    float inputY   = player.MovementInput.y;
+
+    float climbThreshold = 0.1f; // A small buffer to avoid floating-point issues
+
+    if (inputY > 0.1f)
+    {
+        // Player wants to climb UP
+        // Only climb if we're below the top of the ladder by some buffer
+        if (playerY < topY - climbThreshold)
+        {
+            Debug.Log("Climbing up");
+            player.TransitionToState(player.ClimbingState);
+        }
+        else
+        {
+            Debug.Log("Ignoring UP - already at/above the top.");
+        }
+    }
+    else if (inputY < -0.1f)
+    {
+        // Player wants to climb DOWN
+        // Only climb if we're above the bottom of the ladder by some buffer
+        if (playerY > bottomY + climbThreshold)
+        {
+            Debug.Log("Climbing down");
+            player.TransitionToState(player.ClimbingState);
+        }
+        else
+        {
+            Debug.Log("Ignoring DOWN - already at/below the bottom.");
+        }
+    }
+}
+
         }
 
         private bool IsGrounded(PlayerMovement player)

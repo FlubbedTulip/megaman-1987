@@ -1,3 +1,4 @@
+using System;
 using Interfaces;
 using UnityEngine;
 
@@ -7,6 +8,8 @@ namespace Mega_man.States
     {
         private Collider2D _playerCollider;
         private Collider2D _topEdgeCollider;
+        private float ClimbingSpeed = 2.5f;
+
         public void EnterState(IMovementContext context)
         {
             var player = (PlayerMovement)context;
@@ -14,9 +17,7 @@ namespace Mega_man.States
             // Disable gravity for climbing
             player.GravityScale = 0f;
 
-            // set the player into a diffrent layer to pass the edge collider
-            //player.gameObject.layer = LayerMask.NameToLayer("Ladder");
-
+        
             _playerCollider = player.GetComponent<Collider2D>();
             if (player.CurrentLadder != null)
             {
@@ -35,8 +36,9 @@ namespace Mega_man.States
                 float playerY = player.Rb.position.y;
                 if(player.Rb.position.y > player.CurrentLadder.topPosition.position.y)
                 {
-                    playerY -= 1;
+                    playerY -= 1.5f;
                 }
+                else playerY += 0.2f;
                 Vector2 newPos = new Vector2(ladderX, playerY);
                 player.Rb.position = newPos;
             }
@@ -44,8 +46,8 @@ namespace Mega_man.States
             // reset velocity so we start from no Y movement
             player.Rb.linearVelocity = Vector2.zero;
 
-            // Set climbing animation if desired
-            // player.Anim.SetClimbing(true);
+            // Set climbing animation 
+            player.Anim.SetClimbing(true);
 
             Debug.Log("Entered ClimbingState");
         }
@@ -67,7 +69,7 @@ namespace Mega_man.States
             }
 
             // Stop climbing animation
-            // player.Anim.SetClimbing(false);
+             player.Anim.SetClimbing(false);
         }
 
         public void UpdateState(IMovementContext context)
@@ -84,7 +86,7 @@ namespace Mega_man.States
             // Climb using vertical input
             Vector2 velocity = player.Rb.linearVelocity;
             velocity.x = 0f; // Lock horizontal while climbing
-            velocity.y = player.MovementInput.y * player.Speed;
+            velocity.y = player.MovementInput.y * ClimbingSpeed;
             player.Rb.linearVelocity = velocity;
 
             // -- DETECT REACHING TOP OR BOTTOM --
@@ -117,6 +119,8 @@ namespace Mega_man.States
                 {
                     player.Rb.position = ladder.topExitPosition.position;
                 }
+                // Force clear vertical input
+                player.ForceClearVerticalInput();
                 // Transition to grounded after snapping
                 player.TransitionToState(player.GroundedState);
             }
@@ -129,9 +133,13 @@ namespace Mega_man.States
                 {
                     player.Rb.position = ladder.bottomExitPosition.position;
                 }
+                // Force clear vertical input
+                player.ForceClearVerticalInput();
                 // Transition to grounded after snapping
                 player.TransitionToState(player.GroundedState);
             }
         }
+
+    
     }
 }

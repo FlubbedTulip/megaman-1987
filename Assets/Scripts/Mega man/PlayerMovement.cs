@@ -144,6 +144,11 @@ namespace Mega_man
             _spriteRenderer.flipX = !IsFacingRight;
         }
 
+        public void ForceClearVerticalInput()
+        {
+            MovementInput = new Vector2(MovementInput.x, 0f);
+        }
+
         public void TransitionToState(IMovementState newState)
         {
             _currentState?.ExitState(this);
