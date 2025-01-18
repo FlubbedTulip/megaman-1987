@@ -8,19 +8,19 @@ namespace Enemies.Blaster
 {
     public class BlasterController : MonoBehaviour
     {
-        private static readonly int IsOpen = Animator.StringToHash("IsOpen");
-
-        [Header("Timings")]
+        
         [SerializeField] private float closedDelay = 2f;
         [SerializeField] private float openDuration = 1f;     
         
-        [Header("Shooting")]
+   
         [SerializeField] private float shootCooldown = 0.2f;  
         [SerializeField] private Transform spawnPoint;       
         [SerializeField] private bool isFacingRight = true;   
         
-        [Header("References")]
-        [SerializeField] private Animator animator;           
+       
+        [SerializeField] private Animator animator; 
+        private static readonly int IsOpen = Animator.StringToHash("IsOpen");
+
         private bool _isOpen;                                 
         private bool _isInvulnerable;     
         
