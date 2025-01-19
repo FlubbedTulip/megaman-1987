@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 5456570807700525729}
   - component: {fileID: -8678874008060263113}
   - component: {fileID: -6676328369047453183}
+  - component: {fileID: 7287125721834732883}
+  - component: {fileID: 4965508532686119746}
   m_Layer: 0
   m_Name: Cut Man
   m_TagString: Untagged
@@ -104,7 +106,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -115,7 +117,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &-6676328369047453183
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -162,3 +164,46 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.5, y: 2}
   m_EdgeRadius: 0
+--- !u!95 &7287125721834732883
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5420695189235580477}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 079292a2b379b3e4ba2b9f7dc36fea46, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4965508532686119746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5420695189235580477}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd72be9ad6e09644f8bd9a8d81996b89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  rollingCutterPrefab: {fileID: 512170182610736841, guid: 0cd7c60fa72247647bcd6c1a63be10a9, type: 3}
+  moveSpeed: 2
+  jumpForce: 20
+  minJumpInterval: 0.5
+  maxJumpInterval: 3
+  attackCooldown: 2
+  preAttackDelay: 0.5
+  attackRange: 5
