@@ -136,8 +136,9 @@ public class RollingCutter : MonoBehaviour
             return;
         }
 
+        direction = (cutManTransform.position - transform.position).normalized;
         // Keep traveling toward Cut Man
-        transform.position += direction * travelSpeed * Time.deltaTime;
+        transform.position += direction * (travelSpeed * Time.deltaTime);
 
         float distToCutMan = Vector3.Distance(transform.position, cutManTransform.position);
         if (distToCutMan <= reachDistance)

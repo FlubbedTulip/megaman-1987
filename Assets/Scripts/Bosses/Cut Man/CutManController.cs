@@ -166,7 +166,6 @@ public class CutManController : MonoBehaviour
 
     private bool IsGrounded()
     {
-        // Simple raycast or check. Replace with your actual ground check:
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.0f);
         return hit.collider != null;
     }
@@ -181,7 +180,7 @@ public class CutManController : MonoBehaviour
         // Trigger Attack animation here
         //animator.SetTrigger("Attack");
 
-        // Actually instantiate the Rolling Cutter
+        // Instantiate the Rolling Cutter
         ThrowRollingCutter();
 
         // Wait a moment for throw to finish if needed (like animation event)
