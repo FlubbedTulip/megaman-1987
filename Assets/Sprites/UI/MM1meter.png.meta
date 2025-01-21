@@ -212,12 +212,12 @@ TextureImporter:
       name: MM1meter_4
       rect:
         serializedVersion: 2
-        x: 36
-        y: 0
-        width: 10
-        height: 58
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 37
+        y: 1
+        width: 8
+        height: 54
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -256,12 +256,12 @@ TextureImporter:
       name: MM1meter_6
       rect:
         serializedVersion: 2
-        x: 54
-        y: 0
-        width: 10
-        height: 58
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 55
+        y: 1
+        width: 8
+        height: 54
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
