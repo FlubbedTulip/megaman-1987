@@ -1,3 +1,5 @@
+using System.Collections;
+using Projectiles;
 using UnityEditor;
 using UnityEngine;
 
@@ -80,7 +82,6 @@ public class CutManController : MonoBehaviour
         }
 
         // Update animator parameters (example)
-        //animator.SetFloat("Speed", Mathf.Abs(rb.linearVelocity.x));
     }
 
     private void FixedUpdate()
@@ -89,7 +90,6 @@ public class CutManController : MonoBehaviour
         {
             MoveTowardsPlayer();
         }
-        print(rb.linearVelocity);
     }
 
     // --- State Handlers ---
@@ -116,7 +116,6 @@ public class CutManController : MonoBehaviour
         // If it’s time to jump, do so
         if (Time.time >= nextJumpTime && IsGrounded())
         {
-            Debug.Log("choose jump");
             Jump();
             ScheduleNextJump(); // Schedule the next jump time
             return; // Jump will put us in Jump state
@@ -125,7 +124,6 @@ public class CutManController : MonoBehaviour
         // Check if time to attack
         if (Time.time >= nextAttackTime && IsPlayerInRange())
         {
-            Debug.Log("choose attack");
             currentState = CutManState.Attack;
             StartCoroutine(PerformAttackRoutine());
         }
@@ -172,7 +170,6 @@ public class CutManController : MonoBehaviour
         }
 
         currentState = CutManState.Jump;
-        Debug.Log("Cut Man jumps toward the player");
     }
 
 
@@ -189,7 +186,7 @@ public class CutManController : MonoBehaviour
     }
 
     // --- Attacking ---
-    private System.Collections.IEnumerator PerformAttackRoutine()
+    private IEnumerator PerformAttackRoutine()
     {
         // Brief idle before throwing
         rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y); // Stop horizontal movement
@@ -213,7 +210,6 @@ public class CutManController : MonoBehaviour
 
     private void ThrowRollingCutter()
     {
-        Debug.Log("boss is attacking");
 
         if (rollingCutterPrefab == null) return;
 

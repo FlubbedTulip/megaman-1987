@@ -101,14 +101,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24e35b618509483428294c7f0fb71ba2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flightDuration: 1.5
-  arcHeight: 2
-  cutManTransform: {fileID: 0}
-  isFacingRight: 0
-  damageToPlayer: 2
+  travelSpeed: 10
+  rotationSpeed: 720
+  postTravelDuration: 0.5
+  reachDistance: 0.1
+  lifeTime: 5
   playerLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
+  playerTransform: {fileID: 0}
+  cutManTransform: {fileID: 0}
 --- !u!61 &8905547308298506294
 BoxCollider2D:
   m_ObjectHideFlags: 0

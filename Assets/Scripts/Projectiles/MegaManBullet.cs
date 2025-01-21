@@ -1,3 +1,4 @@
+using Managers;
 using Pools;
 using UnityEngine;
 using IPoolable = Interfaces.IPoolable;
@@ -7,6 +8,7 @@ namespace Projectiles
     public class MegaManBullet : MonoBehaviour , IPoolable
     {
         [SerializeField] private float speed = 10f;
+        [SerializeField] private float damage = 1f;
         private int _direction; 
 
         
@@ -26,6 +28,7 @@ namespace Projectiles
             if (other.CompareTag("Enemy"))
             {
                 // TODO damage the player, animation, etc...
+                other.gameObject.GetComponent<HealthManager>().TakeDamage(damage);
                 ReturnToPool();
             }
         }
