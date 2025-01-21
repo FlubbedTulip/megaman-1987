@@ -1,5 +1,6 @@
 using System;
 using Interfaces;
+using Managers;
 using Pools;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace Projectiles
     {
         [SerializeField] private float speed = 10;
         private Vector2 _direction = Vector2.right;
+        [SerializeField] private float damage = 1;
 
         public void Initialize(Vector2 direction)
         {
@@ -26,6 +28,7 @@ namespace Projectiles
             if (other.CompareTag("Player"))
             {
                 // TODO damage the player, animation, etc...
+                other.gameObject.GetComponent<HealthManager>().TakeDamage(damage);
                 ReturnToPool();
             }
         }

@@ -1,251 +1,253 @@
 using System.Collections;
 using Projectiles;
-using UnityEditor;
 using UnityEngine;
 
-public class CutManController : MonoBehaviour
+namespace Bosses.Cut_Man
 {
-    // --- Inspector Fields ---
-    [Header("References")]
-    [Tooltip("Reference to the player's Transform (Mega Man).")]
-    public Transform player;
-    
-    [Tooltip("Projectile prefab for the Rolling Cutter.")]
-    public GameObject rollingCutterPrefab;
-    
-    [Header("Movement Settings")]
-    [Tooltip("Horizontal speed when running toward the player.")]
-    public float moveSpeed = 2.0f;
-    
-    [Tooltip("Vertical force applied when Cut Man jumps.")]
-    public float jumpForce = 5.0f;
-    
-    [Tooltip("Minimum time between jumps (sec).")]
-    public float minJumpInterval = 1.5f;
-    
-    [Tooltip("Maximum time between jumps (sec).")]
-    public float maxJumpInterval = 3.0f;
-    
-    [Header("Attack Settings")]
-    [Tooltip("Time between Rolling Cutter throws (sec).")]
-    public float attackCooldown = 2.0f;
-    
-    [Tooltip("Number of seconds to briefly idle before throwing.")]
-    public float preAttackDelay = 0.5f;
-
-    [Tooltip("Distance at which Cut Man will attempt to throw Rolling Cutter.")]
-    public float attackRange = 5.0f;
-    
-    // --- Internal State Management ---
-    private enum CutManState { Idle, Move, Jump, Attack }
-    private CutManState currentState = CutManState.Idle;
-    
-    private float nextJumpTime;     // Timer for when the next jump is allowed.
-    private float nextAttackTime;   // Timer for when the next attack is allowed.
-    private bool isFacingRight = true;
-    
-    // Components
-    private Rigidbody2D rb;
-    private Animator animator;
-
-    // --- Unity Callbacks ---
-    private void Awake()
+    public class CutManController : MonoBehaviour
     {
-        rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-    }
+        // --- Inspector Fields ---
+        [Header("References")]
+        [Tooltip("Reference to the player's Transform (Mega Man).")]
+        public Transform player;
+    
+        [Tooltip("Projectile prefab for the Rolling Cutter.")]
+        public GameObject rollingCutterPrefab;
+    
+        [Header("Movement Settings")]
+        [Tooltip("Horizontal speed when running toward the player.")]
+        public float moveSpeed = 2.0f;
+    
+        [Tooltip("Vertical force applied when Cut Man jumps.")]
+        public float jumpForce = 5.0f;
+    
+        [Tooltip("Minimum time between jumps (sec).")]
+        public float minJumpInterval = 1.5f;
+    
+        [Tooltip("Maximum time between jumps (sec).")]
+        public float maxJumpInterval = 3.0f;
+    
+        [Header("Attack Settings")]
+        [Tooltip("Time between Rolling Cutter throws (sec).")]
+        public float attackCooldown = 2.0f;
+    
+        [Tooltip("Number of seconds to briefly idle before throwing.")]
+        public float preAttackDelay = 0.5f;
 
-    private void Start()
-    {
-        // Initialize timers
-        ScheduleNextJump();
-        nextAttackTime = Time.time + attackCooldown;
-    }
+        [Tooltip("Distance at which Cut Man will attempt to throw Rolling Cutter.")]
+        public float attackRange = 5.0f;
+    
+        // --- Internal State Management ---
+        private enum CutManState { Idle, Move, Jump, Attack }
+        private CutManState currentState = CutManState.Idle;
+    
+        private float nextJumpTime;     // Timer for when the next jump is allowed.
+        private float nextAttackTime;   // Timer for when the next attack is allowed.
+        private bool isFacingRight = true;
+    
+        // Components
+        private Rigidbody2D rb;
+        private Animator animator;
 
-    private void Update()
-    {
-        // Decide next state based on conditions
-        switch (currentState)
+        // --- Unity Callbacks ---
+        private void Awake()
         {
-            case CutManState.Idle:
-                HandleIdleState();
-                break;
-            case CutManState.Move:
-                HandleMoveState();
-                break;
-            case CutManState.Jump:
-                // Movement in mid-air still possible, so handle in FixedUpdate
-                break;
-            case CutManState.Attack:
-                // Attack logic is triggered via coroutine or direct call
-                break;
+            rb = GetComponent<Rigidbody2D>();
+            animator = GetComponent<Animator>();
         }
 
-        // Update animator parameters (example)
-    }
-
-    private void FixedUpdate()
-    {
-        if (currentState == CutManState.Move)
+        private void Start()
         {
-            MoveTowardsPlayer();
-        }
-    }
-
-    // --- State Handlers ---
-    private void HandleIdleState()
-    {
-        // Optionally set velocity to zero if you want him to stand still
-        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-
-        // If time to attack and in range, prepare to attack
-        if (Time.time >= nextAttackTime && IsPlayerInRange())
-        {
-            // Transition to Attack State (throw Rolling Cutter)
-            currentState = CutManState.Attack;
-            StartCoroutine(PerformAttackRoutine());
-            return;
+            // Initialize timers
+            ScheduleNextJump();
+            nextAttackTime = Time.time + attackCooldown;
         }
 
-        // Otherwise, if not attacking, transition to Move
-        currentState = CutManState.Move;
-    }
-
-    private void HandleMoveState()
-    {
-        // If it’s time to jump, do so
-        if (Time.time >= nextJumpTime && IsGrounded())
+        private void Update()
         {
-            Jump();
-            ScheduleNextJump(); // Schedule the next jump time
-            return; // Jump will put us in Jump state
+            // Decide next state based on conditions
+            switch (currentState)
+            {
+                case CutManState.Idle:
+                    HandleIdleState();
+                    break;
+                case CutManState.Move:
+                    HandleMoveState();
+                    break;
+                case CutManState.Jump:
+                    // Movement in mid-air still possible, so handle in FixedUpdate
+                    break;
+                case CutManState.Attack:
+                    // Attack logic is triggered via coroutine or direct call
+                    break;
+            }
+
+            // Update animator parameters (example)
         }
 
-        // Check if time to attack
-        if (Time.time >= nextAttackTime && IsPlayerInRange())
+        private void FixedUpdate()
         {
-            currentState = CutManState.Attack;
-            StartCoroutine(PerformAttackRoutine());
-        }
-    }
-
-    // --- Movement & Jumping ---
-    private void MoveTowardsPlayer()
-    {
-        if (player == null) return;
-
-        // Determine direction
-        float direction = (player.position.x - transform.position.x) > 0 ? 1f : -1f;
-        
-        // Flip sprite if needed
-        if (direction > 0 && !isFacingRight) Flip();
-        else if (direction < 0 && isFacingRight) Flip();
-
-        // Move horizontally
-        Vector2 velocity = rb.linearVelocity;
-        velocity.x = direction * moveSpeed;
-        rb.linearVelocity = velocity;
-    }
-
-    private void Jump()
-    {
-        // Make sure we have a valid player reference
-        if (player == null)
-            return;
-
-        // Determine if player is to the left or right
-        float direction = (player.position.x - transform.position.x) >= 0 ? 1f : -1f;
-
-        // Optionally, use a higher horizontal speed during jumps to ensure Cut Man can leap over the player
-        // e.g., 1.5x or 2x the normal move speed
-        float jumpHorizontalSpeed = moveSpeed * 2f; 
-
-        // Apply vertical force and horizontal speed
-        rb.linearVelocity = new Vector2(direction * jumpHorizontalSpeed, jumpForce);
-    
-        // Flip sprite if needed
-        if ((direction > 0 && !isFacingRight) || (direction < 0 && isFacingRight))
-        {
-            Flip();
+            if (currentState == CutManState.Move)
+            {
+                MoveTowardsPlayer();
+            }
         }
 
-        currentState = CutManState.Jump;
-    }
-
-
-    private void ScheduleNextJump()
-    {
-        float timeToNextJump = Random.Range(minJumpInterval, maxJumpInterval);
-        nextJumpTime = Time.time + timeToNextJump;
-    }
-
-    private bool IsGrounded()
-    {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.0f);
-        return hit.collider != null;
-    }
-
-    // --- Attacking ---
-    private IEnumerator PerformAttackRoutine()
-    {
-        // Brief idle before throwing
-        rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y); // Stop horizontal movement
-        yield return new WaitForSeconds(preAttackDelay);
-
-        // Trigger Attack animation here
-        //animator.SetTrigger("Attack");
-
-        // Instantiate the Rolling Cutter
-        ThrowRollingCutter();
-
-        // Wait a moment for throw to finish if needed (like animation event)
-        yield return new WaitForSeconds(0.2f);
-
-        // Reset attack timer
-        nextAttackTime = Time.time + attackCooldown;
-
-        // Return to Move or Idle after the throw
-        currentState = CutManState.Move;
-    }
-
-    private void ThrowRollingCutter()
-    {
-
-        if (rollingCutterPrefab == null) return;
-
-        // Instantiate the projectile
-        Vector2 spawnPos = transform.position + (isFacingRight ? Vector3.right : Vector3.left) * 0.5f;
-        GameObject cutterObj = Instantiate(rollingCutterPrefab, spawnPos, Quaternion.identity);
-        RollingCutter rollingCutter = cutterObj.GetComponent<RollingCutter>();
-        if (rollingCutter != null)
+        // --- State Handlers ---
+        private void HandleIdleState()
         {
-            rollingCutter.playerTransform = player;      // The player's Transform
-            rollingCutter.cutManTransform = this.transform; // Cut Man's Transform
-        }
-    }
+            // Optionally set velocity to zero if you want him to stand still
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
 
-    private bool IsPlayerInRange()
-    {
-        if (player == null) return false;
-        float distance = Vector2.Distance(transform.position, player.position);
-        return distance <= attackRange;
-    }
+            // If time to attack and in range, prepare to attack
+            if (Time.time >= nextAttackTime && IsPlayerInRange())
+            {
+                // Transition to Attack State (throw Rolling Cutter)
+                currentState = CutManState.Attack;
+                StartCoroutine(PerformAttackRoutine());
+                return;
+            }
 
-    // --- Utility ---
-    private void Flip()
-    {
-        isFacingRight = !isFacingRight;
-        Vector3 scale = transform.localScale;
-        scale.x *= -1;
-        transform.localScale = scale;
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        // If we land on ground while in Jump state, transition back to Move
-        if (currentState == CutManState.Jump && collision.collider.CompareTag("Ground"))
-        {
+            // Otherwise, if not attacking, transition to Move
             currentState = CutManState.Move;
+        }
+
+        private void HandleMoveState()
+        {
+            // If it’s time to jump, do so
+            if (Time.time >= nextJumpTime && IsGrounded())
+            {
+                Jump();
+                ScheduleNextJump(); // Schedule the next jump time
+                return; // Jump will put us in Jump state
+            }
+
+            // Check if time to attack
+            if (Time.time >= nextAttackTime && IsPlayerInRange())
+            {
+                currentState = CutManState.Attack;
+                StartCoroutine(PerformAttackRoutine());
+            }
+        }
+
+        // --- Movement & Jumping ---
+        private void MoveTowardsPlayer()
+        {
+            if (player == null) return;
+
+            // Determine direction
+            float direction = (player.position.x - transform.position.x) > 0 ? 1f : -1f;
+        
+            // Flip sprite if needed
+            if (direction > 0 && !isFacingRight) Flip();
+            else if (direction < 0 && isFacingRight) Flip();
+
+            // Move horizontally
+            Vector2 velocity = rb.linearVelocity;
+            velocity.x = direction * moveSpeed;
+            rb.linearVelocity = velocity;
+        }
+
+        private void Jump()
+        {
+            // Make sure we have a valid player reference
+            if (player == null)
+                return;
+
+            // Determine if player is to the left or right
+            float direction = (player.position.x - transform.position.x) >= 0 ? 1f : -1f;
+
+            // Optionally, use a higher horizontal speed during jumps to ensure Cut Man can leap over the player
+            // e.g., 1.5x or 2x the normal move speed
+            float jumpHorizontalSpeed = moveSpeed * 2f; 
+
+            // Apply vertical force and horizontal speed
+            rb.linearVelocity = new Vector2(direction * jumpHorizontalSpeed, jumpForce);
+    
+            // Flip sprite if needed
+            if ((direction > 0 && !isFacingRight) || (direction < 0 && isFacingRight))
+            {
+                Flip();
+            }
+
+            currentState = CutManState.Jump;
+        }
+
+
+        private void ScheduleNextJump()
+        {
+            float timeToNextJump = Random.Range(minJumpInterval, maxJumpInterval);
+            nextJumpTime = Time.time + timeToNextJump;
+        }
+
+        private bool IsGrounded()
+        {
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 1.0f);
+            return hit.collider != null;
+        }
+
+        // --- Attacking ---
+        private IEnumerator PerformAttackRoutine()
+        {
+            // Brief idle before throwing
+            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y); // Stop horizontal movement
+            yield return new WaitForSeconds(preAttackDelay);
+
+            // Trigger Attack animation here
+            //animator.SetTrigger("Attack");
+
+            // Instantiate the Rolling Cutter
+            ThrowRollingCutter();
+
+            // Wait a moment for throw to finish if needed (like animation event)
+            yield return new WaitForSeconds(0.2f);
+
+            // Reset attack timer
+            nextAttackTime = Time.time + attackCooldown;
+
+            // Return to Move or Idle after the throw
+            currentState = CutManState.Move;
+        }
+
+        private void ThrowRollingCutter()
+        {
+
+            if (rollingCutterPrefab == null) return;
+
+            // Instantiate the projectile
+            Vector2 spawnPos = transform.position + (isFacingRight ? Vector3.right : Vector3.left) * 0.5f;
+            GameObject cutterObj = Instantiate(rollingCutterPrefab, spawnPos, Quaternion.identity);
+            RollingCutter rollingCutter = cutterObj.GetComponent<RollingCutter>();
+            if (rollingCutter != null)
+            {
+                rollingCutter.playerTransform = player;      // The player's Transform
+                rollingCutter.cutManTransform = this.transform; // Cut Man's Transform
+            }
+        }
+
+        private bool IsPlayerInRange()
+        {
+            if (player == null) return false;
+            float distance = Vector2.Distance(transform.position, player.position);
+            return distance <= attackRange;
+        }
+
+        // --- Utility ---
+        private void Flip()
+        {
+            isFacingRight = !isFacingRight;
+            Vector3 scale = transform.localScale;
+            scale.x *= -1;
+            transform.localScale = scale;
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            // If we land on ground while in Jump state, transition back to Move
+            if (currentState == CutManState.Jump && collision.collider.CompareTag("Ground"))
+            {
+                currentState = CutManState.Move;
+            }
         }
     }
 }

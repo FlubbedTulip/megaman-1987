@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Managers;
 using Pools;
 using Projectiles;
 using UnityEngine;
@@ -18,20 +19,28 @@ namespace Enemies.Blaster
         [SerializeField] private bool isFacingRight = true;   
         
        
-        [SerializeField] private Animator animator; 
-        private static readonly int IsOpen = Animator.StringToHash("IsOpen");
+        private BlasterAnimatorController _animator; 
 
         private bool _isOpen;                                 
         private bool _isInvulnerable;     
         
         private Coroutine _cycleRoutine;
+        private HealthManager _healthManager;
+        private SpriteRenderer _spriteRenderer;
 
+
+        private void Awake()
+        {
+            _healthManager = GetComponent<HealthManager>();
+            _animator = GetComponent<BlasterAnimatorController>();
+        }
 
         private void OnEnable()
         {
             // Restart the main cycle when the enemy is enabled
             _cycleRoutine = StartCoroutine(CycleRoutine());
         }
+        
 
         private void OnDisable()
         {
@@ -69,7 +78,8 @@ namespace Enemies.Blaster
         {
             _isOpen = !closed;
             _isInvulnerable = closed;  // If closed => can't take damage
-            animator.SetBool(IsOpen, _isOpen);
+            _healthManager.SetExternalInvincible(_isInvulnerable);
+            _animator.SetOpen(_isOpen);
         }
 
        
@@ -115,7 +125,12 @@ namespace Enemies.Blaster
             // Initialize bullet direction
             bullet.Initialize(direction);
         }
-
+        
+        public void OnDeathAnimationComplete()
+        {
+            // after the animation is done
+            gameObject.SetActive(false);
+        }
      
         // Utility function to rotate a vector by some degrees
         private Vector2 RotateByAngle(Vector2 vector, float angleDeg)
@@ -129,7 +144,6 @@ namespace Enemies.Blaster
             float ry = vector.x * sin + vector.y * cos;
             return new Vector2(rx, ry);
         }
-
         
     }
 }

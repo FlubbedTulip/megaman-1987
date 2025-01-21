@@ -12,7 +12,10 @@ namespace Managers
 
         [Header("Invincibility")]
         [SerializeField] private float invincibilityDuration = 1f;
+        [SerializeField] private float flashDelay = 0.0833f;
+
         private bool _isInvincible;
+        private SpriteRenderer _spriteRenderer;
 
         // Animator triggers
         private static readonly int IsHurt = Animator.StringToHash("IsHurt");
@@ -28,16 +31,24 @@ namespace Managers
             // Optionally initialize current health to max
             _currentHealth = maxHealth;
             _animator = GetComponent<Animator>();
+            _spriteRenderer = GetComponent<SpriteRenderer>();
         }
-        
-        
+
+        private void OnEnable()
+        {
+            _spriteRenderer.enabled = true;
+            _currentHealth = maxHealth;
+            _animator.SetBool(IsDead, false);
+        }
+
 
         public void TakeDamage(float damage)
         {
-            if (_isInvincible || damage <= 0f) return;
+            if (_isInvincible) return;
 
             // Subtract health
             _currentHealth -= damage;
+            print("health is " + _currentHealth);
             _animator?.SetTrigger(IsHurt);
 
             // Update any UI or other listeners
@@ -45,7 +56,7 @@ namespace Managers
 
             // Start invincibility if needed
             if (invincibilityDuration > 0f)
-                StartCoroutine(InvincibilityRoutine(invincibilityDuration));
+                StartCoroutine(InvincibilityRoutine());
 
             // Check for death
             if (_currentHealth <= 0f)
@@ -67,25 +78,31 @@ namespace Managers
         private void Die()
         {
             Debug.Log($"{gameObject.name} has died");
-            _animator?.SetTrigger(IsDead);
-
             // Fire event so other scripts can respond
             OnDie?.Invoke();
-
-            // Optionally destroy this object or do something else:
-            // Destroy(gameObject);
         }
 
-        private IEnumerator InvincibilityRoutine(float duration)
+        private IEnumerator InvincibilityRoutine()
         {
             _isInvincible = true;
-            yield return new WaitForSeconds(duration);
+            for (int i = 0; i < 10; i++)
+            {
+                _spriteRenderer.enabled = false;
+                yield return new WaitForSeconds(0.04f);
+                _spriteRenderer.enabled = true;
+                yield return new WaitForSeconds(0.04f);
+            }
             _isInvincible = false;
         }
 
         public float GetMaxHealth()
         {
             return maxHealth;
+        }
+        
+        public void SetExternalInvincible(bool state)
+        {
+            _isInvincible = state;
         }
     }
 }

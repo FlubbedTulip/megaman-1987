@@ -23,7 +23,7 @@ namespace Projectiles
         public float lifeTime = 5f;
 
         [Header("Damage Handling")]
-        private int _damage = 2;
+        private int _damage = 10;
 
         [Tooltip("Which layer belongs to the player? Used for OverlapCircle collision checks.")]
         public LayerMask playerLayer;
@@ -78,7 +78,7 @@ namespace Projectiles
         }
 
 
-        private void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Player"))
             {
