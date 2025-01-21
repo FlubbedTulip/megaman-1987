@@ -85,10 +85,11 @@ public class CutManController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (currentState == CutManState.Move || currentState == CutManState.Jump)
+        if (currentState == CutManState.Move)
         {
             MoveTowardsPlayer();
         }
+        print(rb.linearVelocity);
     }
 
     // --- State Handlers ---
@@ -150,13 +151,30 @@ public class CutManController : MonoBehaviour
 
     private void Jump()
     {
-        // Determine horizontal jump direction (50% chance to go left or right)
-        float horizontalJumpDirection = Random.value < 0.5f ? -1f : 1f; // -1 for left, 1 for right
-        Debug.Log("boss is jumping in direction: " + horizontalJumpDirection);
-        // Apply vertical force
-        rb.linearVelocity = new Vector2(horizontalJumpDirection * moveSpeed, jumpForce);
+        // Make sure we have a valid player reference
+        if (player == null)
+            return;
+
+        // Determine if player is to the left or right
+        float direction = (player.position.x - transform.position.x) >= 0 ? 1f : -1f;
+
+        // Optionally, use a higher horizontal speed during jumps to ensure Cut Man can leap over the player
+        // e.g., 1.5x or 2x the normal move speed
+        float jumpHorizontalSpeed = moveSpeed * 2f; 
+
+        // Apply vertical force and horizontal speed
+        rb.linearVelocity = new Vector2(direction * jumpHorizontalSpeed, jumpForce);
+    
+        // Flip sprite if needed
+        if ((direction > 0 && !isFacingRight) || (direction < 0 && isFacingRight))
+        {
+            Flip();
+        }
+
         currentState = CutManState.Jump;
+        Debug.Log("Cut Man jumps toward the player");
     }
+
 
     private void ScheduleNextJump()
     {
