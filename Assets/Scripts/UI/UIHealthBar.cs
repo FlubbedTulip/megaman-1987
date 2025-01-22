@@ -19,15 +19,15 @@ namespace UI
 
         private void OnEnable()
         {
-            targetHealth.OnHealthChanged += HandleHealthChanged;
+            targetHealth.OnDamageTaken += HandleDamageTaken;
         }
 
         private void OnDisable()
         {
-            targetHealth.OnHealthChanged -= HandleHealthChanged;
+            targetHealth.OnDamageTaken -= HandleDamageTaken;
         }
 
-        private void HandleHealthChanged(float currentHealth)
+        private void HandleDamageTaken(float currentHealth)
         {
             float value = currentHealth / _maxHealth;
             SetValue(value);

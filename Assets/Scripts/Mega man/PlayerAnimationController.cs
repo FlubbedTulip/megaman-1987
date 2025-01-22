@@ -20,14 +20,14 @@ namespace Mega_man
         private void OnEnable()
         {
             healthManager.OnDie += PlayDeathAnimation;
-            healthManager.OnHealthChanged += PlayHurtAnimation;
+            healthManager.OnDamageTaken += PlayHurtAnimation;
         }
         
 
         private void OnDisable()
         {
             healthManager.OnDie -= PlayDeathAnimation;
-            healthManager.OnHealthChanged -= PlayHurtAnimation;
+            healthManager.OnDamageTaken -= PlayHurtAnimation;
         }
         
         private void PlayHurtAnimation(float obj)

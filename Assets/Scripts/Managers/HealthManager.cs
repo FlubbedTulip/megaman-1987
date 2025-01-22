@@ -16,13 +16,11 @@ namespace Managers
 
         private bool _isInvincible;
         private SpriteRenderer _spriteRenderer;
-
-        // Animator triggers
-        private static readonly int IsHurt = Animator.StringToHash("IsHurt");
-        private static readonly int IsDead = Animator.StringToHash("IsDead");
+        
         
         // Events
-        public event Action<float> OnHealthChanged; // Pass current health as param
+        public event Action<float> OnDamageTaken; 
+        public event Action OnHitWhileInvincible;
         public event Action OnDie;
 
         private void Awake()
@@ -41,14 +39,18 @@ namespace Managers
 
         public void TakeDamage(float damage)
         {
-            if (_isInvincible) return;
+            if (_isInvincible)
+            {
+                OnHitWhileInvincible?.Invoke();
+                return;
+            }
 
             // Subtract health
             _currentHealth -= damage;
             print("health is " + _currentHealth);
 
             // Update any UI or other listeners
-            OnHealthChanged?.Invoke(_currentHealth);
+            OnDamageTaken?.Invoke(_currentHealth);
 
             // Start invincibility if needed
             if (invincibilityDuration > 0f)
@@ -68,7 +70,7 @@ namespace Managers
             _currentHealth += amount;
             if (_currentHealth > maxHealth) _currentHealth = maxHealth;
             
-            OnHealthChanged?.Invoke(_currentHealth);
+            OnDamageTaken?.Invoke(_currentHealth);
         }
 
         private void Die()

@@ -232,11 +232,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97634f56a3c572f4fa097e1a0c273a8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closedDelay: 2
-  openDuration: 0.1
+  closedDelay: 1.5
+  openDuration: 0.5
   shootCooldown: 0.5
   spawnPoint: {fileID: 6967478269494906153}
   isFacingRight: 0
+  shootSfx: {fileID: 8300000, guid: bc2134fe101e5234cb96b4aade87cb3c, type: 3}
+  deathSfx: {fileID: 8300000, guid: 14d7ca1f509b8014f9675605e2f5e2f9, type: 3}
+  invincibleSfx: {fileID: 8300000, guid: 76f008ed1b930ba41b77c07637935efb, type: 3}
 --- !u!114 &8773972117161590942
 MonoBehaviour:
   m_ObjectHideFlags: 0

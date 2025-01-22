@@ -12,10 +12,9 @@ namespace Pools
             _audioSource = GetComponent<AudioSource>();
         }
 
-        public void PlaySound(AudioClip clip, float pitch)
+        public void PlaySound(AudioClip clip)
         {
             _audioSource.clip = clip;
-            _audioSource.pitch = pitch;
             _audioSource.Play();
 
             // Return to pool after the clip length

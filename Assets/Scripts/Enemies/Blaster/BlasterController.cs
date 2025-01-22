@@ -9,14 +9,20 @@ namespace Enemies.Blaster
 {
     public class BlasterController : MonoBehaviour
     {
-        
+        [Header("Timing")]
         [SerializeField] private float closedDelay = 2f;
         [SerializeField] private float openDuration = 1f;     
-        
-   
         [SerializeField] private float shootCooldown = 0.2f;  
+        
+        [Header("Positioning")]
         [SerializeField] private Transform spawnPoint;       
-        [SerializeField] private bool isFacingRight = true;   
+        [SerializeField] private bool isFacingRight = true;  
+        
+        [Header("Audio")]
+        [SerializeField] private AudioClip shootSfx;
+        [SerializeField] private AudioClip deathSfx;
+        [SerializeField] private AudioClip invincibleSfx;
+        
         
        
         private BlasterAnimatorController _animator; 
@@ -39,8 +45,20 @@ namespace Enemies.Blaster
         {
             // Restart the main cycle when the enemy is enabled
             _cycleRoutine = StartCoroutine(CycleRoutine());
+            _healthManager.OnDamageTaken += PlayHitSfx;
+            _healthManager.OnHitWhileInvincible += PlayInvincibleSfx;
         }
-        
+
+        private void PlayInvincibleSfx()
+        {
+            SoundManager.Instance.PlaySound(invincibleSfx);
+        }
+
+        private void PlayHitSfx(float obj)
+        {
+            SoundManager.Instance.PlaySound(deathSfx);
+        }
+
 
         private void OnDisable()
         {
@@ -124,6 +142,8 @@ namespace Enemies.Blaster
             bullet.transform.position = spawnPoint.position;
             // Initialize bullet direction
             bullet.Initialize(direction);
+            // play sfx
+            SoundManager.Instance.PlaySound(shootSfx);
         }
         
         public void OnDeathAnimationComplete()
