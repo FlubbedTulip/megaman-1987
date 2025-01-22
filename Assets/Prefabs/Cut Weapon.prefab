@@ -106,6 +106,7 @@ MonoBehaviour:
   postTravelDuration: 0.5
   reachDistance: 0.1
   lifeTime: 5
+  damage: 20
   playerLayer:
     serializedVersion: 2
     m_Bits: 64

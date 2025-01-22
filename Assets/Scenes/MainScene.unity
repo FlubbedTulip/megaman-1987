@@ -181,7 +181,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &223889723
 RectTransform:
   m_ObjectHideFlags: 0
@@ -292,6 +292,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5374468791539468828, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
+      propertyPath: healthManager
+      value: 
+      objectReference: {fileID: 1890851850}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -833,9 +837,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.0787234
+    y: 0.027659573
     width: 1
-    height: 0.84335095
+    height: 0.9457446
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34

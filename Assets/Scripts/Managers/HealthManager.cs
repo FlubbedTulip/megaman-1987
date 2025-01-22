@@ -20,7 +20,6 @@ namespace Managers
         // Animator triggers
         private static readonly int IsHurt = Animator.StringToHash("IsHurt");
         private static readonly int IsDead = Animator.StringToHash("IsDead");
-        private Animator _animator;
         
         // Events
         public event Action<float> OnHealthChanged; // Pass current health as param
@@ -30,7 +29,6 @@ namespace Managers
         {
             // Optionally initialize current health to max
             _currentHealth = maxHealth;
-            _animator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
@@ -38,7 +36,6 @@ namespace Managers
         {
             _spriteRenderer.enabled = true;
             _currentHealth = maxHealth;
-            _animator.SetBool(IsDead, false);
         }
 
 
@@ -49,7 +46,6 @@ namespace Managers
             // Subtract health
             _currentHealth -= damage;
             print("health is " + _currentHealth);
-            _animator?.SetTrigger(IsHurt);
 
             // Update any UI or other listeners
             OnHealthChanged?.Invoke(_currentHealth);
@@ -79,6 +75,8 @@ namespace Managers
         {
             Debug.Log($"{gameObject.name} has died");
             // Fire event so other scripts can respond
+            StopCoroutine(InvincibilityRoutine());
+            _spriteRenderer.enabled = true;
             OnDie?.Invoke();
         }
 

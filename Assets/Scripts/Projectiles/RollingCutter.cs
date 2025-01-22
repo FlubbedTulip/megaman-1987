@@ -1,5 +1,6 @@
 using Managers;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Projectiles
 {
@@ -22,8 +23,9 @@ namespace Projectiles
         public float reachDistance = 0.1f;
         public float lifeTime = 5f;
 
+        [FormerlySerializedAs("_damage")]
         [Header("Damage Handling")]
-        private int _damage = 10;
+        [SerializeField] private int damage = 10;
 
         [Tooltip("Which layer belongs to the player? Used for OverlapCircle collision checks.")]
         public LayerMask playerLayer;
@@ -82,7 +84,7 @@ namespace Projectiles
         {
             if (other.CompareTag("Player"))
             {
-                other.gameObject.GetComponent<HealthManager>().TakeDamage(_damage);
+                other.gameObject.GetComponent<HealthManager>().TakeDamage(damage);
             }
         }
 

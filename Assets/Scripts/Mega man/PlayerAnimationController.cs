@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using Managers;
 using UnityEngine;
 
 namespace Mega_man
@@ -6,14 +8,39 @@ namespace Mega_man
     public class PlayerAnimationController : MonoBehaviour
     {
         [SerializeField] private Animator animator;
+        [SerializeField] private HealthManager healthManager;
          
         private static readonly int Running = Animator.StringToHash("IsRunning");
         private static readonly int Jumping = Animator.StringToHash("IsJumping");
         private static readonly int Shooting = Animator.StringToHash("IsShooting");
         private static readonly int Climbing = Animator.StringToHash("IsClimbing");
+        private static readonly int IsDead = Animator.StringToHash("IsDead");
+        private static readonly int IsHurt = Animator.StringToHash("IsHurt");
 
+        private void OnEnable()
+        {
+            healthManager.OnDie += PlayDeathAnimation;
+            healthManager.OnHealthChanged += PlayHurtAnimation;
+        }
         
 
+        private void OnDisable()
+        {
+            healthManager.OnDie -= PlayDeathAnimation;
+            healthManager.OnHealthChanged -= PlayHurtAnimation;
+        }
+        
+        private void PlayHurtAnimation(float obj)
+        {
+            animator.SetTrigger(IsHurt);
+        }
+
+        private void PlayDeathAnimation()
+        {
+            StartCoroutine(SetDeathAnimation());
+        }
+
+        
         public void SetRunning(bool isRunning)
         {
             animator.SetBool(Running, isRunning);
@@ -31,6 +58,18 @@ namespace Mega_man
 
         public void SetClimbing(bool isClimbing){
             animator.SetBool(Climbing,isClimbing);
+        }
+
+
+        private IEnumerator SetDeathAnimation()
+        {
+            animator.SetTrigger(IsHurt);
+            Time.timeScale = 0f;
+            yield return new WaitForSecondsRealtime(1f);
+            Time.timeScale = 1f;
+            animator.SetTrigger(IsDead);
+            yield return new WaitForSecondsRealtime(2f);
+            Destroy(gameObject);
         }
     }
 }
