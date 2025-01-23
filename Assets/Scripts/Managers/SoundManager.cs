@@ -6,7 +6,7 @@ namespace Managers
     public class SoundManager : MonoSingleton<SoundManager>
     {
         [Header("Audio Sources")]
-        [SerializeField] private AudioSource musicSource;   // For background music only
+        [SerializeField] public AudioSource musicSource;   // For background music only
 
         //Play a one-shot SFX using the AudioSource pool
         public void PlaySound(AudioClip audioClip)
