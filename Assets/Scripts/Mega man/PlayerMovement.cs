@@ -18,6 +18,8 @@ namespace Mega_man
         [SerializeField] private float maxUpwardVelocity = 14f; //  velocity clamp
         [SerializeField] private float normalGravityScale = 1f;
         
+        [Header("SFX")]
+        [SerializeField] private AudioClip landSound;
        
 
         // States
@@ -34,7 +36,7 @@ namespace Mega_man
         private SpriteRenderer _spriteRenderer;
         private PlayerShoot _playerShooting;
         private PlayerAnimationController _animController;
-        private Vector2 lastLadderPosition;
+        private Vector2 _lastLadderPosition;
 
 
 
@@ -57,9 +59,10 @@ namespace Mega_man
         public float MaxJumpHoldTime  => maxJumpHoldTime;
         public float MaxUpwardVelocity=> maxUpwardVelocity;
         public float NormalGravityScale => normalGravityScale;
-        public Vector2 LastLadderPosition => lastLadderPosition;
+        public Vector2 LastLadderPosition => _lastLadderPosition;
         public Rigidbody2D Rb => _rb;
         public PlayerAnimationController Anim => _animController;
+        public AudioClip LandSound => landSound;
 
 
         // Public properties for user input

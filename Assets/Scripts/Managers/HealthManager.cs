@@ -47,31 +47,22 @@ namespace Managers
 
             // Subtract health
             _currentHealth -= damage;
-            print("health is " + _currentHealth);
-
-            // Update any UI or other listeners
-            OnDamageTaken?.Invoke(_currentHealth);
-
-            // Start invincibility if needed
-            if (invincibilityDuration > 0f)
-                StartCoroutine(InvincibilityRoutine());
-
+            
             // Check for death
             if (_currentHealth <= 0f)
             {
                 Die();
             }
+            else
+            {
+                OnDamageTaken?.Invoke(_currentHealth);
+                // Start invincibility
+                if (invincibilityDuration > 0f)
+                    StartCoroutine(InvincibilityRoutine());
+                
+            }
         }
-
-        public void Heal(float amount)
-        {
-            if (amount <= 0f) return;
-
-            _currentHealth += amount;
-            if (_currentHealth > maxHealth) _currentHealth = maxHealth;
-            
-            OnDamageTaken?.Invoke(_currentHealth);
-        }
+        
 
         private void Die()
         {

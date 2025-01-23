@@ -18,9 +18,7 @@ namespace Mega_man.States
         }
 
         public void ExitState(IMovementContext context)
-        {
-            
-        }
+        { }
 
         public void UpdateState(IMovementContext context)
         {
@@ -69,12 +67,7 @@ namespace Mega_man.States
         // Only climb if we're below the top of the ladder by some buffer
         if (playerY < topY - climbThreshold)
         {
-            Debug.Log("Climbing up");
             player.TransitionToState(player.ClimbingState);
-        }
-        else
-        {
-            Debug.Log("Ignoring UP - already at/above the top.");
         }
     }
     else if (inputY < -0.1f)
@@ -83,12 +76,7 @@ namespace Mega_man.States
         // Only climb if we're above the bottom of the ladder by some buffer
         if (playerY > bottomY + climbThreshold)
         {
-            Debug.Log("Climbing down");
             player.TransitionToState(player.ClimbingState);
-        }
-        else
-        {
-            Debug.Log("Ignoring DOWN - already at/below the bottom.");
         }
     }
 }

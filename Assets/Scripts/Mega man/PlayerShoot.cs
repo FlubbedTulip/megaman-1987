@@ -1,4 +1,5 @@
 using System;
+using Managers;
 using Pools;
 using Projectiles;
 using UnityEngine;
@@ -13,7 +14,8 @@ namespace Mega_man
         private PlayerAnimationController _animController;
         [SerializeField] private Transform rightShootSpawn;
         [SerializeField] private Transform leftShootSpawn;
-        
+
+        public event Action OnShoot;
         
 
         public void Shoot(bool isFacingRight)
@@ -28,6 +30,7 @@ namespace Mega_man
             int direction = isFacingRight ? 1 : -1;
             
             bullet.Initialize(direction);
+            OnShoot?.Invoke();
         }
     }
 }

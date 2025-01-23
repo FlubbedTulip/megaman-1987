@@ -16,6 +16,8 @@ namespace Mega_man
         private static readonly int Climbing = Animator.StringToHash("IsClimbing");
         private static readonly int IsDead = Animator.StringToHash("IsDead");
         private static readonly int IsHurt = Animator.StringToHash("IsHurt");
+        
+        public event Action OnDeathExplostion;
 
         private void OnEnable()
         {
@@ -68,6 +70,7 @@ namespace Mega_man
             yield return new WaitForSecondsRealtime(1f);
             Time.timeScale = 1f;
             animator.SetTrigger(IsDead);
+            OnDeathExplostion?.Invoke();
             yield return new WaitForSecondsRealtime(2f);
             Destroy(gameObject);
         }

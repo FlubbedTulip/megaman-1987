@@ -1,4 +1,6 @@
+using System;
 using Interfaces;
+using Managers;
 using UnityEngine;
 
 namespace Mega_man.States
@@ -8,6 +10,7 @@ namespace Mega_man.States
     private float _jumpTimeCounter;   // How long we've been applying jump-boost
     private bool _hasJumpStarted;     // Did we actually do a jump, or are we just falling?
     private bool _isFallingFromLadder; // New flag to handle falling from a ladder
+    
 
     public void EnterState(IMovementContext context)
     {
@@ -76,10 +79,12 @@ namespace Mega_man.States
         // 4) Check if grounded (landed)
         if (IsGrounded(player))
         {
+            // Play the landing SFX
+            SoundManager.Instance.PlaySound(player.LandSound);
             player.TransitionToState(player.GroundedState);
         }
 
-        //5) Optional: Ladder check if you can grab a ladder mid-air
+        //5) Ladder check if you can grab a ladder mid-air
         if (player.IsNearLadder && player.MovementInput.y > 0f)
         {
             player.TransitionToState(player.ClimbingState);
