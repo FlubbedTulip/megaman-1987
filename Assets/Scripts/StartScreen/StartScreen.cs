@@ -30,7 +30,7 @@ public class StartScreen : MonoBehaviour
         {
             _hasPressedStart = true; // Prevent multiple presses
             SoundManager.Instance.PlayMusic(levelStart);
-            StartCoroutine(FlashText()); // Stop the flashing
+            StartCoroutine(FlashText()); 
             StartCoroutine(TransitionToMainLevel()); // Start the transition
         }
     }

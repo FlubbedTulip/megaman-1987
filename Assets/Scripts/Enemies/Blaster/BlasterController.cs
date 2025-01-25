@@ -32,7 +32,6 @@ namespace Enemies.Blaster
         
         private Coroutine _cycleRoutine;
         private HealthManager _healthManager;
-        private SpriteRenderer _spriteRenderer;
 
 
         private void Awake()
@@ -47,6 +46,12 @@ namespace Enemies.Blaster
             _cycleRoutine = StartCoroutine(CycleRoutine());
             _healthManager.OnDamageTaken += PlayHitSfx;
             _healthManager.OnHitWhileInvincible += PlayInvincibleSfx;
+            _healthManager.OnDie += DropPowerUP;
+        }
+
+        private void DropPowerUP()
+        {
+            GameEvents.OnEnemyDied?.Invoke(transform.position);
         }
 
         private void PlayInvincibleSfx()
