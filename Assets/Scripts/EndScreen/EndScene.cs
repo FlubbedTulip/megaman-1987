@@ -22,7 +22,7 @@ namespace Managers
             resultText.text = GameManager.Instance.IsGameWon ? "YOU WIN!" : "YOU LOSE!";
 
             // 2) Display the player's final score
-            scoreText.text = $"Final Score: {GameManager.Instance.PlayerScore}";
+            //scoreText.text = $"Final Score: {GameManager.Instance.PlayerScore}";
 
             // 3) Start flashing the restart text
             StartCoroutine(FlashRestartText());

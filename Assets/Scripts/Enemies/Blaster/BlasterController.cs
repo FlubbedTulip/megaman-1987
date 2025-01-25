@@ -49,6 +49,20 @@ namespace Enemies.Blaster
             _healthManager.OnDie += DropPowerUP;
         }
 
+           private void OnDisable()
+        {
+            // Stop the main cycle when the enemy is disabled
+            if (_cycleRoutine != null)
+            {
+                StopCoroutine(_cycleRoutine);
+                _cycleRoutine = null;
+            }
+            _healthManager.OnDamageTaken -= PlayHitSfx;
+            _healthManager.OnHitWhileInvincible -= PlayInvincibleSfx;
+            _healthManager.OnDie -= DropPowerUP;
+        }
+
+
         private void DropPowerUP()
         {
             GameEvents.OnEnemyDied?.Invoke(transform.position);
@@ -65,32 +79,23 @@ namespace Enemies.Blaster
         }
 
 
-        private void OnDisable()
-        {
-            // Stop the main cycle when the enemy is disabled
-            if (_cycleRoutine != null)
-            {
-                StopCoroutine(_cycleRoutine);
-                _cycleRoutine = null;
-            }
-        }
+    
         
-        /// Main open/close cycle coroutine.
+        // Main open/close cycle coroutine.
         private IEnumerator CycleRoutine()
         {
             while (true)
             {
-                // 1) Closed state
+                // 1) Closed
                 SetClosed(true);
                 yield return new WaitForSeconds(closedDelay);
 
-                // 2) Open state
+                // 2) Open
                 SetClosed(false);
-                
-                // Fire bullets immediately
+
+                // Fire bullets
                 yield return StartCoroutine(FireBulletsRoutine());
-                
-                // Wait openDuration in open state
+
                 yield return new WaitForSeconds(openDuration);
             }
         }

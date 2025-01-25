@@ -9,7 +9,7 @@ namespace Managers
     {
         [Header("Scene Names")]
         public string startSceneName = "StartMenu";
-        public string mainSceneName  = "MainLevel";
+        public string mainSceneName  = "MainScene";
         public string endSceneName   = "EndScene";
 
         [Header("Music Clips")]
@@ -45,6 +45,7 @@ namespace Managers
             // If we start directly in MainLevel for testing, we can do SetupMainLevel.
             if (SceneManager.GetActiveScene().name == mainSceneName)
             {
+                print("test");
                 SetupMainLevel();
             }
         }

@@ -19,7 +19,7 @@ namespace Projectiles
 
         private void Update()
         {
-            transform.Translate( _direction * (speed * Time.deltaTime));
+             transform.Translate(_direction * speed * Time.deltaTime * TimeSlower.SlowFactor);
         }
 
 
