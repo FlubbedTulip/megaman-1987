@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Events;
 using Managers;
 using Pools;
 using Projectiles;
@@ -22,6 +23,9 @@ namespace Enemies.Blaster
         [SerializeField] private AudioClip shootSfx;
         [SerializeField] private AudioClip deathSfx;
         [SerializeField] private AudioClip invincibleSfx;
+        
+        [Header("Score")]
+        [SerializeField] private int scoreValue = 200;
         
         
        
@@ -46,7 +50,7 @@ namespace Enemies.Blaster
             _cycleRoutine = StartCoroutine(CycleRoutine());
             _healthManager.OnDamageTaken += PlayHitSfx;
             _healthManager.OnHitWhileInvincible += PlayInvincibleSfx;
-            _healthManager.OnDie += DropPowerUP;
+            _healthManager.OnDie += DropPowerUpAndRaiseScore;
         }
 
            private void OnDisable()
@@ -59,13 +63,14 @@ namespace Enemies.Blaster
             }
             _healthManager.OnDamageTaken -= PlayHitSfx;
             _healthManager.OnHitWhileInvincible -= PlayInvincibleSfx;
-            _healthManager.OnDie -= DropPowerUP;
+            _healthManager.OnDie -= DropPowerUpAndRaiseScore;
         }
 
 
-        private void DropPowerUP()
+        private void DropPowerUpAndRaiseScore()
         {
             GameEvents.OnEnemyDied?.Invoke(transform.position);
+            GameManager.Instance.AddScore(scoreValue);
         }
 
         private void PlayInvincibleSfx()

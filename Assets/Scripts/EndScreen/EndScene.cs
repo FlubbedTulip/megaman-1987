@@ -1,9 +1,9 @@
 using System.Collections;
+using Managers;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-namespace Managers
+namespace EndScreen
 {
     public class EndScreenManager : MonoBehaviour
     {
@@ -22,10 +22,8 @@ namespace Managers
             resultText.text = GameManager.Instance.IsGameWon ? "YOU WIN!" : "YOU LOSE!";
 
             // 2) Display the player's final score
-            //scoreText.text = $"Final Score: {GameManager.Instance.PlayerScore}";
+            scoreText.text = $"Score: {GameManager.Instance.PlayerScore}";
 
-            // 3) Start flashing the restart text
-            StartCoroutine(FlashRestartText());
         }
 
         private void Update()
@@ -33,7 +31,6 @@ namespace Managers
             // Restart the game (fully) if Enter is pressed
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                StopFlashing();
                 RestartGame();
             }
 
@@ -56,15 +53,13 @@ namespace Managers
             restartText.SetActive(true);
         }
 
-        private void StopFlashing()
-        {
-            _isFlashing = false;
-        }
-
+        
         private void RestartGame()
         {
             // Instead of reloading the MainLevel scene directly,
             // call GameManager's StartGame() to reset lives, score, etc.
+            StartCoroutine(FlashRestartText());
+
             GameManager.Instance.StartGame();
         }
 

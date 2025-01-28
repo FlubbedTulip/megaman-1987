@@ -1,7 +1,11 @@
 
+using System;
 using UnityEngine;
 
-public static class GameEvents
+namespace Events
 {
-    public static System.Action<Vector3> OnEnemyDied;
+    public static class GameEvents
+    {
+        public static Action<Vector3> OnEnemyDied;
+    }
 }

@@ -1,27 +1,30 @@
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace Managers
 {
     public class GameManager : MonoSingleton<GameManager>
     {
         [Header("Scene Names")]
-        public string startSceneName = "StartMenu";
-        public string mainSceneName  = "MainScene";
-        public string endSceneName   = "EndScene";
+        [SerializeField] private string startSceneName = "StartMenu";
+        [SerializeField] private string mainSceneName  = "MainScene";
+        [SerializeField] private string endSceneName   = "EndScene";
 
         [Header("Music Clips")]
-        public AudioClip mainLevelMusic; // Music for the MainLevel
+        [SerializeField] private AudioClip mainLevelMusic; // Music for the MainLevel
 
         [Header("Gameplay Settings")]
-        public int maxLives = 3;                // Total lives
-        public float readyDelay = 3f;           // Seconds to show “READY” before spawning Mega Man
+        [SerializeField] private int maxLives = 3;                // Total lives
+        [SerializeField] private float readyDelay = 3f;           // Seconds to show “READY” before spawning Mega Man
+        
+        [Header("Player prefab")]
+        [SerializeField] private GameObject playerObject;
+        [SerializeField] private Transform playerSpawnPoint;
 
         // Internal references
         [SerializeField] private TextMeshProUGUI screenMessage;
+        [SerializeField] private TextMeshProUGUI score;
         private bool _showingReady;
         private float _readyTimer;
 
@@ -37,7 +40,7 @@ namespace Managers
             this.screenMessage = screenMessage;
         }
 
-        private int PlayerScore { get; set;}
+        public int PlayerScore {get; private set;}
 
         private void Start()
         {
@@ -99,10 +102,8 @@ namespace Managers
                     if (screenMessage != null) screenMessage.text = "";
 
                     // TODO: Spawn or enable Mega Man here
-                    // e.g. Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-                    // or playerObject.SetActive(true);
+                    playerObject.SetActive(true);
                     _isPlayerSpawned = true;
-                    Debug.Log("Mega Man spawned!");
                 }
             }
         }
@@ -129,17 +130,12 @@ namespace Managers
             IsGameWon = false; // Reset previous state if any
 
             // Play the main level music
-            SoundManager.Instance.PlayMusic(mainLevelMusic, true);
-
-            // Attempt to find a “ScreenMessage” UI text for the READY message
-            screenMessage = GameObject.Find("ScreenMessage")?.GetComponent<TextMeshProUGUI>();
-            if (screenMessage != null)
-            {
-                // Start “READY” countdown
-                _readyTimer = readyDelay;
-                _showingReady = true;
-                screenMessage.text = $"READY\n{Mathf.CeilToInt(_readyTimer)}";
-            }
+            SoundManager.Instance.PlayMusic(mainLevelMusic);
+            
+            // Start “READY” countdown
+            _readyTimer = readyDelay;
+            _showingReady = true;
+            screenMessage.text = "READY";
         }
 
         // ———————————————————————————————————————————
@@ -186,7 +182,17 @@ namespace Managers
         public void AddScore(int points)
         {
             PlayerScore += points;
-            // Possibly call UpdateScoreUI();
+            UpdateScoreUI();
+        }
+        
+        private void UpdateScoreUI()
+        {
+            if (score != null)
+            {
+                // Format the score as 7 digits, padded with zeros.
+                // e.g. 42 -> "0000042"
+                score.text = PlayerScore.ToString("D7"); 
+            }
         }
 
 
