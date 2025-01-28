@@ -66,7 +66,6 @@ namespace Managers
 
         private void Die()
         {
-            Debug.Log($"{gameObject.name} has died");
             // Fire event so other scripts can respond
             StopCoroutine(InvincibilityRoutine());
             _spriteRenderer.enabled = true;

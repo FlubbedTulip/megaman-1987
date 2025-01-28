@@ -3,11 +3,25 @@ using UnityEngine;
 
 namespace Managers
 {
-    public class SoundManager : MonoSingleton<SoundManager>
+    public class SoundManager : MonoBehaviour
     {
         [Header("Audio Sources")]
         [SerializeField] public AudioSource musicSource;   // For background music only
 
+        private static SoundManager _instance;
+        public static SoundManager Instance => _instance;
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        
+        
         //Play a one-shot SFX using the AudioSource pool
         public void PlaySound(AudioClip audioClip)
         {

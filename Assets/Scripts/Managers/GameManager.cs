@@ -1,10 +1,11 @@
+using Events;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Managers
 {
-    public class GameManager : MonoSingleton<GameManager>
+    public class GameManager : MonoBehaviour
     {
         [Header("Scene Names")]
         [SerializeField] private string startSceneName = "StartMenu";
@@ -19,12 +20,11 @@ namespace Managers
         [SerializeField] private float readyDelay = 3f;           // Seconds to show “READY” before spawning Mega Man
         
         [Header("Player prefab")]
-        [SerializeField] private GameObject playerObject;
-        [SerializeField] private Transform playerSpawnPoint;
+        private GameObject _playerObject;
 
         // Internal references
-        [SerializeField] private TextMeshProUGUI screenMessage;
-        [SerializeField] private TextMeshProUGUI score;
+        private TextMeshProUGUI _screenMessage;
+        private TextMeshProUGUI _score;
         private bool _showingReady;
         private float _readyTimer;
 
@@ -34,24 +34,26 @@ namespace Managers
 
         private bool _isPlayerSpawned;
         private bool _isGameOver;
-
-        public GameManager(TextMeshProUGUI screenMessage)
-        {
-            this.screenMessage = screenMessage;
-        }
+        
 
         public int PlayerScore {get; private set;}
-
+        
+        
+        private static GameManager _instance;
+        public static GameManager Instance => _instance;
+        private void Awake()
+        {
+            if (_instance != null && _instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        
         private void Start()
         {
-            // Optional if you want the GameManager to persist across scenes:
-            // DontDestroyOnLoad(gameObject);
-
-            // Initialize lives
-            _currentLives = maxLives;
-
-            // If we start in the Start scene, do nothing special here,
-            // If we start directly in MainLevel for testing, we can do SetupMainLevel.
             if (SceneManager.GetActiveScene().name == mainSceneName)
             {
                 SetupMainLevel();
@@ -61,21 +63,21 @@ namespace Managers
         private void OnEnable()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
+            GameEvents.PlayerDeath += PlayerDied;
         }
 
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
+            GameEvents.PlayerDeath -= PlayerDied;
         }
 
-        /// <summary>
-        /// Called automatically whenever a new scene is loaded
-        /// </summary>
+        
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (scene.name == mainSceneName)
             {
-                SetupMainLevel();
+                //SetupMainLevel();
             }
             else if (scene.name == endSceneName)
             {
@@ -91,26 +93,23 @@ namespace Managers
             if (_showingReady)
             {
                 _readyTimer -= Time.deltaTime;
-                if (screenMessage != null)
+                if (_screenMessage != null)
                 {
-                    screenMessage.text = "READY";
+                    _screenMessage.text = "READY";
                 }
 
                 if (_readyTimer <= 0f)
                 {
                     _showingReady = false;
-                    if (screenMessage != null) screenMessage.text = "";
+                    if (_screenMessage != null) _screenMessage.text = "";
 
                     // TODO: Spawn or enable Mega Man here
-                    playerObject.SetActive(true);
+                    _playerObject.SetActive(true);
                     _isPlayerSpawned = true;
                 }
             }
         }
 
-        /// <summary>
-        /// Called from e.g. a “Play” button in the Start scene
-        /// </summary>
         public void StartGame()
         {
             // Reset lives each time we start the game fresh
@@ -135,7 +134,7 @@ namespace Managers
             // Start “READY” countdown
             _readyTimer = readyDelay;
             _showingReady = true;
-            screenMessage.text = "READY";
+            _screenMessage.text = "READY";
         }
 
         // ———————————————————————————————————————————
@@ -145,24 +144,22 @@ namespace Managers
         /// <summary>
         /// Called when Mega Man dies once.
         /// </summary>
-        public void PlayerDied()
+        private void PlayerDied()
         {
             if (_isGameOver) return;
-
-            // Decrement lives
+            print(_currentLives);
             _currentLives--;
+            print(_currentLives);
             Debug.Log($"Player died. Lives left: {_currentLives}");
 
             if (_currentLives > 0)
             {
-                // Restart the main scene for another attempt
                 SceneManager.LoadScene(mainSceneName);
             }
             else
             {
-                // Out of lives → game over
                 _isGameOver = true;
-                IsGameWon = false; // We lost
+                IsGameWon = false;
                 GoToEndScene();
             }
         }
@@ -187,11 +184,11 @@ namespace Managers
         
         private void UpdateScoreUI()
         {
-            if (score != null)
+            if (_score != null)
             {
                 // Format the score as 7 digits, padded with zeros.
                 // e.g. 42 -> "0000042"
-                score.text = PlayerScore.ToString("D7"); 
+                _score.text = PlayerScore.ToString("D7"); 
             }
         }
 
@@ -203,6 +200,15 @@ namespace Managers
         private void GoToEndScene()
         {
             SceneManager.LoadScene(endSceneName);
+        }
+
+        public void SetMainSceneReferences(TextMeshProUGUI scoreText, TextMeshProUGUI screenMessage, GameObject megaManPrefab)
+        {
+            _score = scoreText;
+            _screenMessage = screenMessage;
+            _playerObject = megaManPrefab;
+            
+            SetupMainLevel();
         }
     }
 }

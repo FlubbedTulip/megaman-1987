@@ -25,14 +25,14 @@ namespace Mega_man
         {
             healthManager.OnDamageTaken += PlayHurtSound;
             playerShoot.OnShoot += PlayShootSound;
-            playerAnimationController.OnDeathExplostion += PlayDeathSound;
+            playerAnimationController.OnDeathExplosion += PlayDeathSound;
         }
 
         private void OnDisable()
         {
             healthManager.OnDamageTaken -= PlayHurtSound;
             playerShoot.OnShoot -= PlayShootSound;
-            playerAnimationController.OnDeathExplostion -= PlayDeathSound;
+            playerAnimationController.OnDeathExplosion -= PlayDeathSound;
         }
         
         private void PlayShootSound()

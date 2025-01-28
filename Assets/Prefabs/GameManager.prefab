@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1733459803206438355}
+  - component: {fileID: 3743560755468760129}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -31,3 +32,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3743560755468760129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095612925905724007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4b7036f175f6d3498cbf65692bfe487, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startSceneName: StartMenu
+  mainSceneName: MainScene
+  endSceneName: EndScene
+  mainLevelMusic: {fileID: 0}
+  maxLives: 3
+  readyDelay: 3
+  playerObject: {fileID: 0}
+  playerSpawnPoint: {fileID: 0}
+  screenMessage: {fileID: 0}
+  score: {fileID: 0}

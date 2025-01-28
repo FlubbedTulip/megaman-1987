@@ -48,6 +48,6 @@ public class StartScreen : MonoBehaviour
     private IEnumerator TransitionToMainLevel()
     {
         yield return new WaitForSeconds(transitionDelay); // Wait before transitioning
-        SceneManager.LoadScene(mainLevelSceneName); // Load the main level scene
+        GameManager.Instance.StartGame();
     }
 }

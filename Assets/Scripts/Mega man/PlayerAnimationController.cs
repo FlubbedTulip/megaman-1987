@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Events;
 using Managers;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ namespace Mega_man
         private static readonly int IsDead = Animator.StringToHash("IsDead");
         private static readonly int IsHurt = Animator.StringToHash("IsHurt");
         
-        public event Action OnDeathExplostion;
+        public event Action OnDeathExplosion;
 
         private void OnEnable()
         {
@@ -70,9 +71,10 @@ namespace Mega_man
             yield return new WaitForSecondsRealtime(1f);
             Time.timeScale = 1f;
             animator.SetTrigger(IsDead);
-            OnDeathExplostion?.Invoke();
+            OnDeathExplosion?.Invoke();
             yield return new WaitForSecondsRealtime(2f);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+            GameEvents.PlayerDeath?.Invoke();
         }
     }
 }

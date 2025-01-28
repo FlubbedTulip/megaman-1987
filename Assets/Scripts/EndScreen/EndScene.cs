@@ -22,7 +22,7 @@ namespace EndScreen
             resultText.text = GameManager.Instance.IsGameWon ? "YOU WIN!" : "YOU LOSE!";
 
             // 2) Display the player's final score
-            scoreText.text = $"Score: {GameManager.Instance.PlayerScore}";
+            scoreText.text = $"SCORE: {GameManager.Instance.PlayerScore}";
 
         }
 
