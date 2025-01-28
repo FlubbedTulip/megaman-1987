@@ -1,3 +1,4 @@
+using Events;
 using Interfaces;
 using Mega_man.States;
 using UnityEngine;
@@ -40,6 +41,7 @@ namespace Mega_man
         private SpriteRenderer _spriteRenderer;
         private PlayerShoot _playerShooting;
         private PlayerAnimationController _animController;
+        private Animator _animator;
         private Vector2 _lastLadderPosition;
 
 
@@ -67,6 +69,7 @@ namespace Mega_man
         public Rigidbody2D Rb => _rb;
         public PlayerAnimationController Anim => _animController;
         public AudioClip LandSound => landSound;
+        public Animator Animator => _animator;
 
 
         // Public properties for user input
@@ -88,6 +91,7 @@ namespace Mega_man
             _spriteRenderer = GetComponent<SpriteRenderer>();
             _playerShooting = GetComponent<PlayerShoot>();
             _animController = GetComponent<PlayerAnimationController>();
+            _animator = GetComponent<Animator>();
 
 
             // Input
@@ -109,6 +113,7 @@ namespace Mega_man
             _inputActions.Player.Jump.started   += OnJumpStarted;
             _inputActions.Player.Jump.canceled  += OnJumpCanceled;
             _inputActions.Player.Shoot.started += OnShootStarted;
+            
 
 
             // Start in grounded

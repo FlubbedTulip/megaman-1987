@@ -15,15 +15,20 @@ namespace EndScreen
         [Header("Settings")]
         [SerializeField] private float flashInterval = 0.5f;    // Time between flashes for "Restart Level"
         private bool _isFlashing;
+        
+        [Header("Audio")]
+        [SerializeField] private AudioClip endSong;
 
         private void Start()
         {
-            // 1) Display "Win" or "Lose" message
+            // Display "Win" or "Lose" message
             resultText.text = GameManager.Instance.IsGameWon ? "YOU WIN!" : "YOU LOSE!";
 
-            // 2) Display the player's final score
+            // Display the player's final score
             scoreText.text = $"SCORE: {GameManager.Instance.PlayerScore}";
-
+            
+            // Play Music
+            SoundManager.Instance.PlayMusic(endSong);
         }
 
         private void Update()

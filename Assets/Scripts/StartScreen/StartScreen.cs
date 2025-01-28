@@ -1,53 +1,55 @@
 using System.Collections;
 using Managers;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class StartScreen : MonoBehaviour
+namespace StartScreen
 {
-    [Header("Settings")]
-    [SerializeField] private GameObject blackSprite; // The black sprite covering the text
-    [SerializeField] private string mainLevelSceneName = "MainScene"; // Name of the main level scene
-    [SerializeField] private float flashInterval = 0.5f; // Time between flashes
-    [SerializeField] private float transitionDelay = 2f; // Delay after pressing Enter before transitioning
-    [SerializeField] private AudioClip levelSong; 
-    [SerializeField] private AudioClip levelStart; 
-
-
-    private bool _hasPressedStart = false; // Tracks if the player has already pressed start
-
-    private void Start()
+    public class StartScreen : MonoBehaviour
     {
-        // Start the flashing coroutine
-        blackSprite.SetActive(false); // Ensure the text is visible
-        SoundManager.Instance.PlayMusic(levelSong);
-    }
+        [Header("Settings")]
+        [SerializeField] private GameObject blackSprite; // The black sprite covering the text
+        [SerializeField] private string mainLevelSceneName = "MainScene"; // Name of the main level scene
+        [SerializeField] private float flashInterval = 0.5f; // Time between flashes
+        [SerializeField] private float transitionDelay = 2f; // Delay after pressing Enter before transitioning
+        [SerializeField] private AudioClip levelSong; 
+        [SerializeField] private AudioClip levelStart; 
 
-    private void Update()
-    {
-        // Check for Enter key press
-        if (Input.GetKeyDown(KeyCode.Return) && !_hasPressedStart)
+
+        private bool _hasPressedStart; // Tracks if the player has already pressed start
+
+        private void Start()
         {
-            _hasPressedStart = true; // Prevent multiple presses
-            SoundManager.Instance.PlayMusic(levelStart);
-            StartCoroutine(FlashText()); 
-            StartCoroutine(TransitionToMainLevel()); // Start the transition
+            // Start the flashing coroutine
+            blackSprite.SetActive(false); // Ensure the text is visible
+            SoundManager.Instance.PlayMusic(levelSong);
         }
-    }
 
-    private IEnumerator FlashText()
-    {
-        while (true)
+        private void Update()
         {
-            // Toggle the black sprite
-            blackSprite.SetActive(!blackSprite.activeSelf);
-            yield return new WaitForSeconds(flashInterval); // Wait for the flash interval
+            // Check for Enter key press
+            if (Input.GetKeyDown(KeyCode.Return) && !_hasPressedStart)
+            {
+                _hasPressedStart = true; // Prevent multiple presses
+                SoundManager.Instance.PlayMusic(levelStart);
+                StartCoroutine(FlashText()); 
+                StartCoroutine(TransitionToMainLevel()); // Start the transition
+            }
         }
-    }
 
-    private IEnumerator TransitionToMainLevel()
-    {
-        yield return new WaitForSeconds(transitionDelay); // Wait before transitioning
-        GameManager.Instance.StartGame();
+        private IEnumerator FlashText()
+        {
+            while (true)
+            {
+                // Toggle the black sprite
+                blackSprite.SetActive(!blackSprite.activeSelf);
+                yield return new WaitForSeconds(flashInterval); // Wait for the flash interval
+            }
+        }
+
+        private IEnumerator TransitionToMainLevel()
+        {
+            yield return new WaitForSeconds(transitionDelay); // Wait before transitioning
+            GameManager.Instance.StartGame();
+        }
     }
 }

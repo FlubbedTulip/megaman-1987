@@ -239,9 +239,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 1593954458}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &22576749
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -1522,6 +1522,33 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
+--- !u!50 &281494812 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 2429826507754034601, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
+  m_PrefabInstance: {fileID: 281494811}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &281494813 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6272160592104694985, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
+  m_PrefabInstance: {fileID: 281494811}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890851849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 074a87afab3e37041874fa9428bc2851, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &281494814 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1908462458207577550, guid: 8ba74878c0d83bc4ea6dcffe91a9ef9f, type: 3}
+  m_PrefabInstance: {fileID: 281494811}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1890851849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &286850605
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2102,9 +2129,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 1758621737}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!1 &363127062
 GameObject:
   m_ObjectHideFlags: 0
@@ -2154,9 +2181,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 173228865}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &363127065
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -2818,9 +2845,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 177126914}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &450344795
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -3319,9 +3346,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.027659573
+    y: 0.099999994
     width: 1
-    height: 0.9457446
+    height: 0.7986701
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 34
@@ -3351,7 +3378,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.0000007, y: 2.1279402, z: -10}
+  m_LocalPosition: {x: 1.0000054, y: 2.1279402, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3462,9 +3489,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 748529097}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &535323616
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -3766,9 +3793,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 217211720}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &582795785
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -15714,9 +15741,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 2107231228}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &948978202
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -16320,9 +16347,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 1428419590}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &1076508783
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -18084,9 +18111,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 1451883948}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &1320879206
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -19543,9 +19570,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 626134427}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &1515445866
 EdgeCollider2D:
   m_ObjectHideFlags: 0
@@ -21157,9 +21184,9 @@ MonoBehaviour:
   bottomCamera: {fileID: 1567754387}
   pauseDuration: 0.5
   transitionDuration: 1.5
-  playerInput: {fileID: 0}
-  player: {fileID: 0}
-  rb: {fileID: 0}
+  playerInput: {fileID: 281494814}
+  player: {fileID: 281494813}
+  rb: {fileID: 281494812}
 --- !u!68 &1752819421
 EdgeCollider2D:
   m_ObjectHideFlags: 0

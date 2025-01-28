@@ -135,6 +135,7 @@ namespace Managers
             _readyTimer = readyDelay;
             _showingReady = true;
             _screenMessage.text = "READY";
+            UpdateScoreUI();
         }
 
         // ———————————————————————————————————————————

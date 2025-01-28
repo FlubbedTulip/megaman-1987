@@ -8,7 +8,7 @@ namespace Mega_man.States
     {
         private Collider2D _playerCollider;
         private Collider2D _topEdgeCollider;
-        private float ClimbingSpeed = 2.5f;
+        private float _climbingSpeed = 2.5f;
 
         public void EnterState(IMovementContext context)
         {
@@ -65,7 +65,7 @@ namespace Mega_man.States
             // Re-enable collision with the top edge
             if (_playerCollider && _topEdgeCollider)
             {
-            Physics2D.IgnoreCollision(_playerCollider, _topEdgeCollider, false);
+                Physics2D.IgnoreCollision(_playerCollider, _topEdgeCollider, false);
             }
 
             // Stop climbing animation
@@ -86,8 +86,19 @@ namespace Mega_man.States
             // Climb using vertical input
             Vector2 velocity = player.Rb.linearVelocity;
             velocity.x = 0f; // Lock horizontal while climbing
-            velocity.y = player.MovementInput.y * ClimbingSpeed;
+            velocity.y = player.MovementInput.y * _climbingSpeed;
             player.Rb.linearVelocity = velocity;
+            
+            //Set animator speed based on movement
+            if (Mathf.Abs(player.MovementInput.y) < 0.01f 
+                && player.Rb.bodyType != RigidbodyType2D.Kinematic) // only freeze if you're truly not moving & not in manual kinematic mode
+            {
+                player.Animator.speed = 0f;
+            }
+            else
+            {
+                player.Animator.speed = 1f;
+            }
 
             // -- DETECT REACHING TOP OR BOTTOM --
             CheckAndHandleLadderEdges(player);
@@ -97,7 +108,6 @@ namespace Mega_man.States
             {
                 // Switch to in-air: no actual jump impulse, just gravity
                 player.TransitionToState(player.InAirState);
-                return;
             }
         }
 
