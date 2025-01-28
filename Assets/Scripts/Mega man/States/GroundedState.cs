@@ -9,7 +9,7 @@ namespace Mega_man.States
         public void EnterState(IMovementContext context)
         {
             //  set normal gravity
-            if (context is PlayerMovement player)
+            if (context is PlayerController player)
             {
                 player.GravityScale = player.NormalGravityScale;
                 //set an animation
@@ -22,7 +22,7 @@ namespace Mega_man.States
 
         public void UpdateState(IMovementContext context)
         {
-            var player = (PlayerMovement)context;
+            var player = (PlayerController)context;
 
             // 1) Handle horizontal movement
             Vector2 velocity = player.Rb.linearVelocity;

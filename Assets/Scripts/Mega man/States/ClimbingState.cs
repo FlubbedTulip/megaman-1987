@@ -9,10 +9,15 @@ namespace Mega_man.States
         private Collider2D _playerCollider;
         private Collider2D _topEdgeCollider;
         private float _climbingSpeed = 2.5f;
+        
+        private float _shootFreezeTime;
+        private const float SHOOT_FREEZE_DURATION = 0.2f;
 
         public void EnterState(IMovementContext context)
         {
-            var player = (PlayerMovement)context;
+            var player = (PlayerController)context;
+            
+            player.Shoot.OnShoot += OnShootWhileClimbing;
             
             // Disable gravity for climbing
             player.GravityScale = 0f;
@@ -51,16 +56,17 @@ namespace Mega_man.States
 
             Debug.Log("Entered ClimbingState");
         }
+        
 
         public void ExitState(IMovementContext context)
         {
-            var player = (PlayerMovement)context;
+            var player = (PlayerController)context;
 
             // Re-enable gravity
             player.GravityScale = player.NormalGravityScale;
+            
+            player.Shoot.OnShoot -= OnShootWhileClimbing;
 
-            // Switch back to normal Player layer
-            //player.gameObject.layer = LayerMask.NameToLayer("Default");  
 
             // Re-enable collision with the top edge
             if (_playerCollider && _topEdgeCollider)
@@ -74,7 +80,7 @@ namespace Mega_man.States
 
         public void UpdateState(IMovementContext context)
         {
-            var player = (PlayerMovement)context;
+            var player = (PlayerController)context;
 
             // If there's no ladder reference, or the player left the ladder area, fall
             if (player.CurrentLadder == null || !player.IsNearLadder)
@@ -87,6 +93,19 @@ namespace Mega_man.States
             Vector2 velocity = player.Rb.linearVelocity;
             velocity.x = 0f; // Lock horizontal while climbing
             velocity.y = player.MovementInput.y * _climbingSpeed;
+            
+            if (_shootFreezeTime > 0f)
+            {
+                // Decrease the lock timer & block movement
+                _shootFreezeTime -= Time.deltaTime;
+                velocity.y = 0f; // can't move up/down
+            }
+            else
+            {
+                // Normal climb speed
+                velocity.y = player.MovementInput.y * _climbingSpeed;
+            }
+            
             player.Rb.linearVelocity = velocity;
             
             //Set animator speed based on movement
@@ -111,7 +130,7 @@ namespace Mega_man.States
             }
         }
 
-        private void CheckAndHandleLadderEdges(PlayerMovement player)
+        private void CheckAndHandleLadderEdges(PlayerController player)
         {
             Ladder.Ladder ladder = player.CurrentLadder;
             if (ladder == null) return;
@@ -148,6 +167,13 @@ namespace Mega_man.States
                 // Transition to grounded after snapping
                 player.TransitionToState(player.GroundedState);
             }
+        }
+        
+        
+        private void OnShootWhileClimbing()
+        {
+            // Lock vertical movement for a short time
+            _shootFreezeTime = SHOOT_FREEZE_DURATION;
         }
 
     

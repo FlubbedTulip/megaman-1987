@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 namespace Mega_man
 {
     [RequireComponent(typeof(Rigidbody2D), typeof(SpriteRenderer))]
-    public class PlayerMovement : MonoBehaviour, IMovementContext
+    public class PlayerController : MonoBehaviour, IMovementContext
     {
         [Header("Movement Settings")]
         [SerializeField] private float speed = 5f;
@@ -70,6 +70,7 @@ namespace Mega_man
         public PlayerAnimationController Anim => _animController;
         public AudioClip LandSound => landSound;
         public Animator Animator => _animator;
+        public PlayerShoot Shoot => _playerShooting;
 
 
         // Public properties for user input
@@ -151,7 +152,7 @@ namespace Mega_man
         private void UpdateFacingDirection()
         {
             // if velocity.x < 0 => face left, if velocity.x > 0 => face right
-            float vx = _rb.linearVelocity.x;
+            float vx = MovementInput.x;
             if (vx < -0.01f)  IsFacingRight = false;
             if (vx >  0.01f)  IsFacingRight = true;
 

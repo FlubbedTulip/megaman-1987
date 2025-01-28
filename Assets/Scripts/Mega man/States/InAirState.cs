@@ -14,7 +14,7 @@ namespace Mega_man.States
 
     public void EnterState(IMovementContext context)
     {
-        var player = (PlayerMovement)context;
+        var player = (PlayerController)context;
 
         // Check if we are falling from a ladder
         _isFallingFromLadder = !player.JumpPressed && !player.IsGrounded();
@@ -41,7 +41,7 @@ namespace Mega_man.States
 
     public void ExitState(IMovementContext context)
     {
-        var player = (PlayerMovement)context;
+        var player = (PlayerController)context;
 
         // Turn off jump animation when we leave the air
         player.Anim.SetJumping(false);
@@ -49,7 +49,7 @@ namespace Mega_man.States
 
     public void UpdateState(IMovementContext context)
     {
-        var player = (PlayerMovement)context;
+        var player = (PlayerController)context;
         
         // 1) Horizontal Air Control
         Vector2 velocity = player.Rb.linearVelocity;

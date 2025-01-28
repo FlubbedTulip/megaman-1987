@@ -17,7 +17,7 @@ public class CameraSwitcher : MonoBehaviour
 
     [Header("References")]
     public PlayerInput playerInput;
-    [SerializeField] private PlayerMovement player;
+    [SerializeField] private PlayerController player;
     
     [SerializeField] private Rigidbody2D rb;
 
