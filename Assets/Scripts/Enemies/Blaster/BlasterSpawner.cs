@@ -14,13 +14,11 @@ namespace Enemies.Blaster
 
         private void OnBecameVisible()
         {
-            print("spawner is visible");
             SpawnEnemy();
         }
 
         private void OnBecameInvisible()
         {
-            print("spawner is invisible");
             DespawnEnemy();
         }
 

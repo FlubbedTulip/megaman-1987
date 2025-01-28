@@ -103,7 +103,7 @@ namespace Mega_man.States
 
         private void CheckAndHandleLadderEdges(PlayerMovement player)
         {
-            Ladder ladder = player.CurrentLadder;
+            Ladder.Ladder ladder = player.CurrentLadder;
             if (ladder == null) return;
 
             // Current Y position

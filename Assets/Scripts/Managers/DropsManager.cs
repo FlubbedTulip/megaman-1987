@@ -21,7 +21,7 @@ private void OnDisable()
     {
         // 50% drop chance
         float roll = Random.value; 
-        if (roll < 0.1f)
+        if (roll < 0.5f)
         {
             // 70% powerUpA, 30% powerUpB
             float which = Random.value;

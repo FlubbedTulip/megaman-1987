@@ -20,6 +20,9 @@ namespace Mega_man
         
         [Header("SFX")]
         [SerializeField] private AudioClip landSound;
+        
+        [SerializeField] internal LayerMask groundLayers;
+
        
 
         // States
@@ -66,10 +69,10 @@ namespace Mega_man
 
 
         // Public properties for user input
-        public Vector2 MovementInput  { get; private set; }
+        public Vector2 MovementInput  { get; set; }
         public bool    JumpPressed    { get; private set; }
         public bool    JumpHeld       { get; private set; }
-        public Ladder CurrentLadder { get; private set; }
+        public Ladder.Ladder CurrentLadder { get; private set; }
         public bool    IsNearLadder   { get; set; }
         public bool IsFacingRight { get; set; } = true; 
         
@@ -134,6 +137,9 @@ namespace Mega_man
 
             // Reset JumpPressed so it's one-frame only
             JumpPressed = false;
+            
+            //print(_rb.linearVelocity);
+           // print(_rb.gravityScale);
 
         }
 
@@ -195,7 +201,7 @@ namespace Mega_man
             {
                 IsNearLadder = true;
                 // Try to get the Ladder component from this collider or its parent
-                Ladder ladder = other.GetComponentInParent<Ladder>();
+                Ladder.Ladder ladder = other.GetComponentInParent<Ladder.Ladder>();
                 if (ladder != null)
                 {
                     CurrentLadder = ladder;
@@ -209,12 +215,17 @@ namespace Mega_man
             {
                 IsNearLadder = false;
                 // If this exit belongs to the same ladder, clear the reference
-                Ladder ladder = other.GetComponentInParent<Ladder>();
+                Ladder.Ladder ladder = other.GetComponentInParent<Ladder.Ladder>();
                 if (ladder == CurrentLadder)
                 {
                     CurrentLadder = null;
                 }
             }
+        }
+
+        public bool CurrentStateIsInAir()
+        {
+            return _currentState == _inAirState;
         }
     }
 }

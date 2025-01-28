@@ -1,87 +1,134 @@
+using System;
 using System.Collections;
+using Mega_man;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Camera
+public class CameraSwitcher : MonoBehaviour
 {
-    public class CameraSwitcher : MonoBehaviour
+    [Header("Cameras")]
+    public CinemachineCamera topCamera;
+    public CinemachineCamera bottomCamera;
+
+    [Header("Transition Settings")]
+    public float pauseDuration = 0.5f;      // How long to pause everything initially
+    public float transitionDuration = 1f;   // Camera + manual movement duration
+
+    [Header("References")]
+    public PlayerInput playerInput;
+    [SerializeField] private PlayerMovement player;
+    
+    [SerializeField] private Rigidbody2D rb;
+
+    private bool _isSwitching;
+
+    private void Update()
     {
-        public CinemachineCamera topCamera; // Assign the starting camera in the Inspector
-        public CinemachineCamera bottomCamera; // Assign the target camera in the Inspector
-        public float transitionDuration = 1f; // Total duration of the transition
-        [SerializeField] private PlayerInput playerInput;
-
-
-        private bool _isSwitching;
-
-        private void OnTriggerEnter2D(Collider2D collision)
+        if (_isSwitching)
         {
-            if (collision.CompareTag("Player") && !_isSwitching)
+            var vector2 = player.Rb.linearVelocity;
+            vector2.x = 0;
+            player.Rb.linearVelocity = vector2; // Stop any momentum
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player") && !_isSwitching)
+        {
+            var rb = collision.GetComponent<Rigidbody2D>();
+            if (rb != null)
             {
-                // Check if the player is moving downward relative to the trigger
-                Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    Vector2 relativeVelocity = rb.linearVelocity; 
-                    bool isFacingUp = relativeVelocity.y > 0;
-                    print(isFacingUp);
-                    StartCoroutine(SwitchCamera(isFacingUp));
-                }
+                bool isFacingUp = rb.linearVelocity.y > 0f; 
+                StartCoroutine(SwitchCamera(isFacingUp));
             }
         }
+    }
 
-        private IEnumerator SwitchCamera(bool isPlayerFacingUp)
-        {
-            _isSwitching = true;
+    private IEnumerator SwitchCamera(bool isPlayerFacingUp)
+    {
+        _isSwitching = true;
 
-            StartCoroutine(PauseTimeCoroutine());
+        // ------------------------------------------------
+        // 1) Pause the game fully using timeScale=0
+        //    then wait in real-time for pauseDuration
+        // ------------------------------------------------
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(pauseDuration);
 
-            // Slow down the game
-            Time.timeScale = 0.01f;
-            playerInput.actions.Disable();
-            
-            // Switch cameras
-            if (isPlayerFacingUp)
-            {
-                bottomCamera.Priority = 0; // Lower priority
-                topCamera.Priority = 1; // Higher priority
-            }
-            else
-            {
-                bottomCamera.Priority = 1;
-                topCamera.Priority = 0;
-            }
-            
-            Debug.Log($"Starting Transition: {transitionDuration}s");
+        // Unpause game
+        Time.timeScale = 1f;
 
-            float elapsed = 0f;
-            while (elapsed <  transitionDuration)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                Debug.Log($"Elapsed: {elapsed}/{transitionDuration}");
-                yield return null;
-            }
-            
-            Debug.Log("Transition Complete!");
-
-            
-            // Restore normal game speed
-            Time.timeScale = 1f;
-            playerInput.actions.Enable();
-            _isSwitching = false;
-            
-            Debug.Log("returned to normal time scale");
-        }
-
+        // ------------------------------------------------
+        // 2) Disable movement input & set player to Kinematic
+        // ------------------------------------------------
+        playerInput.actions.Disable();
+        player.Rb.bodyType = RigidbodyType2D.Kinematic;
+        player.Rb.linearVelocity = Vector2.zero; // Stop any momentum
         
-        private IEnumerator PauseTimeCoroutine()
+
+        // ------------------------------------------------
+        // 3) Switch camera priorities to trigger Cinemachine blend
+        // ------------------------------------------------
+        if (isPlayerFacingUp)
         {
-            Time.timeScale = 0f; // Pause the game
-            yield return new WaitForSecondsRealtime(0.5f); // Wait without being affected by timeScale
-            Time.timeScale = 1f; // Resume the game
+            bottomCamera.Priority = 0;
+            topCamera.Priority = 1;
+        }
+        else
+        {
+            bottomCamera.Priority = 1;
+            topCamera.Priority = 0;
         }
 
-       
+        // ------------------------------------------------
+        // 4) Manually move the player over transitionDuration
+        //    while the camera blend is also happening
+        // ------------------------------------------------
+        yield return StartCoroutine(HandleManualMove(isPlayerFacingUp));
+        
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(pauseDuration);
+
+        // Unpause game
+        Time.timeScale = 1f;
+
+        // ------------------------------------------------
+        // 5) Re-enable normal physics and input
+        // ------------------------------------------------
+        player.Rb.bodyType = RigidbodyType2D.Dynamic;
+        playerInput.actions.Enable();
+        
+        if (player.CurrentStateIsInAir())
+        {
+            var vel = player.Rb.linearVelocity;
+            vel.y = Mathf.Min(vel.y, 0); // zero out upward velocity
+            vel.y -= 5f;  // push downward
+            player.Rb.linearVelocity = vel;
+        }
+
+        _isSwitching = false;
+        Debug.Log("Camera transition complete. Player movement restored.");
+    }
+
+    private IEnumerator HandleManualMove(bool isFacingUp)
+    {
+        // We'll move the player 1.5 units up or down
+        float elapsedTime = 0f;
+        Vector3 startPos = player.transform.position;
+        Vector3 targetPos = startPos + (isFacingUp ? Vector3.up * 1f : Vector3.down * 1f);
+
+        while (elapsedTime < transitionDuration)
+        {
+            float t = elapsedTime / transitionDuration;
+            player.transform.position = Vector3.Lerp(startPos, targetPos, t);
+
+            elapsedTime += Time.unscaledDeltaTime; 
+            yield return null;
+        }
+
+        // Snap final
+        player.transform.position = targetPos;
     }
 }

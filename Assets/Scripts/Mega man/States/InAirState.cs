@@ -29,6 +29,7 @@ namespace Mega_man.States
         // If we jumped from the ground, apply initial velocity
         if (_hasJumpStarted)
         {
+            Debug.Log("Jump started");
             Vector2 velocity = player.Rb.linearVelocity;
             velocity.y = player.JumpForce;
             player.Rb.linearVelocity = velocity;
@@ -36,10 +37,6 @@ namespace Mega_man.States
 
         // Normal gravity
         player.GravityScale = player.NormalGravityScale;
-
-        Debug.Log(_isFallingFromLadder
-            ? "Falling off the ladder"
-            : "Jumping or falling normally");
     }
 
     public void ExitState(IMovementContext context)
@@ -93,8 +90,18 @@ namespace Mega_man.States
 
     private bool IsGrounded(PlayerMovement player)
     {
-        return Mathf.Abs(player.Rb.linearVelocity.y) < 0.01f;
+        // Raycast approach instead of velocity check
+        Vector2 origin = player.Rb.position;
+        origin.y -= 0.7f;
+        float distance = 0.2f; // or read from a serialized field
+        LayerMask layers = player.groundLayers; // if you store it in PlayerMovement
+
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, distance, layers);
+        Debug.DrawLine(origin, origin + Vector2.down * distance, Color.yellow);
+
+        return (hit.collider != null);
     }
+
 }
 
 }

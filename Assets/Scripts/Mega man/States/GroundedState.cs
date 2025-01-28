@@ -85,9 +85,17 @@ namespace Mega_man.States
 
         private bool IsGrounded(PlayerMovement player)
         {
-            // TODO ADD RAYCAST SYSTEM FOR BETTER DETECTION
-            // placeholder system
-            return Mathf.Abs(player.Rb.linearVelocity.y) < 0.01f;
+            // Raycast approach instead of velocity check
+            Vector2 origin = player.Rb.position;
+            origin.y -= 0.7f;
+            float distance = 0.2f; // or read from a serialized field
+            LayerMask layers = player.groundLayers; // if you store it in PlayerMovement
+
+            RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, distance, layers);
+            Debug.DrawLine(origin, origin + Vector2.down * distance, Color.yellow);
+
+            return (hit.collider != null);
         }
+
     }
 }
