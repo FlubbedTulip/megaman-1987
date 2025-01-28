@@ -117,7 +117,7 @@ public class CameraSwitcher : MonoBehaviour
         // We'll move the player 1.5 units up or down
         float elapsedTime = 0f;
         Vector3 startPos = player.transform.position;
-        Vector3 targetPos = startPos + (isFacingUp ? Vector3.up * 1f : Vector3.down * 1f);
+        Vector3 targetPos = startPos + (isFacingUp ? Vector3.up * 2f : Vector3.down * 2f);
 
         while (elapsedTime < transitionDuration)
         {

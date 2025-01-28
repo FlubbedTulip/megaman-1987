@@ -43,7 +43,7 @@ namespace Mega_man.States
             }
 
             // 4) If not grounded (e.g. we stepped off a ledge), go in-air
-            if (!IsGrounded(player))
+            if (!player.IsGrounded())
             {
                 player.TransitionToState(player.InAirState);
                 return;
@@ -83,19 +83,8 @@ namespace Mega_man.States
 
         }
 
-        private bool IsGrounded(PlayerMovement player)
-        {
-            // Raycast approach instead of velocity check
-            Vector2 origin = player.Rb.position;
-            origin.y -= 0.7f;
-            float distance = 0.2f; // or read from a serialized field
-            LayerMask layers = player.groundLayers; // if you store it in PlayerMovement
+        
 
-            RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, distance, layers);
-            Debug.DrawLine(origin, origin + Vector2.down * distance, Color.yellow);
-
-            return (hit.collider != null);
-        }
 
     }
 }

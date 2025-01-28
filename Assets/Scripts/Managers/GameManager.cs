@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Managers
 {
@@ -20,7 +21,7 @@ namespace Managers
         public float readyDelay = 3f;           // Seconds to show “READY” before spawning Mega Man
 
         // Internal references
-        private TextMeshProUGUI _screenMessage;
+        [SerializeField] private TextMeshProUGUI screenMessage;
         private bool _showingReady;
         private float _readyTimer;
 
@@ -31,7 +32,12 @@ namespace Managers
         private bool _isPlayerSpawned;
         private bool _isGameOver;
 
-        private int _playerScore { get; set;}
+        public GameManager(TextMeshProUGUI screenMessage)
+        {
+            this.screenMessage = screenMessage;
+        }
+
+        private int PlayerScore { get; set;}
 
         private void Start()
         {
@@ -45,7 +51,6 @@ namespace Managers
             // If we start directly in MainLevel for testing, we can do SetupMainLevel.
             if (SceneManager.GetActiveScene().name == mainSceneName)
             {
-                print("test");
                 SetupMainLevel();
             }
         }
@@ -83,15 +88,15 @@ namespace Managers
             if (_showingReady)
             {
                 _readyTimer -= Time.deltaTime;
-                if (_screenMessage != null)
+                if (screenMessage != null)
                 {
-                    _screenMessage.text = $"READY\n{Mathf.CeilToInt(_readyTimer)}";
+                    screenMessage.text = "READY";
                 }
 
                 if (_readyTimer <= 0f)
                 {
                     _showingReady = false;
-                    if (_screenMessage != null) _screenMessage.text = "";
+                    if (screenMessage != null) screenMessage.text = "";
 
                     // TODO: Spawn or enable Mega Man here
                     // e.g. Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
@@ -109,7 +114,7 @@ namespace Managers
         {
             // Reset lives each time we start the game fresh
             _currentLives = maxLives;
-            _playerScore  = 0;          // reset score
+            PlayerScore  = 0;          // reset score
             _isGameOver = false;
             SceneManager.LoadScene(mainSceneName);
         }
@@ -127,13 +132,13 @@ namespace Managers
             SoundManager.Instance.PlayMusic(mainLevelMusic, true);
 
             // Attempt to find a “ScreenMessage” UI text for the READY message
-            _screenMessage = GameObject.Find("ScreenMessage")?.GetComponent<TextMeshProUGUI>();
-            if (_screenMessage != null)
+            screenMessage = GameObject.Find("ScreenMessage")?.GetComponent<TextMeshProUGUI>();
+            if (screenMessage != null)
             {
                 // Start “READY” countdown
                 _readyTimer = readyDelay;
                 _showingReady = true;
-                _screenMessage.text = $"READY\n{Mathf.CeilToInt(_readyTimer)}";
+                screenMessage.text = $"READY\n{Mathf.CeilToInt(_readyTimer)}";
             }
         }
 
@@ -180,7 +185,7 @@ namespace Managers
 
         public void AddScore(int points)
         {
-            _playerScore += points;
+            PlayerScore += points;
             // Possibly call UpdateScoreUI();
         }
 

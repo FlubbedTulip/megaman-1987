@@ -17,7 +17,7 @@ namespace Mega_man.States
         var player = (PlayerMovement)context;
 
         // Check if we are falling from a ladder
-        _isFallingFromLadder = !player.JumpPressed && !IsGrounded(player);
+        _isFallingFromLadder = !player.JumpPressed && !player.IsGrounded();
 
         // Set jump animation
         player.Anim.SetJumping(true);
@@ -50,7 +50,7 @@ namespace Mega_man.States
     public void UpdateState(IMovementContext context)
     {
         var player = (PlayerMovement)context;
-
+        
         // 1) Horizontal Air Control
         Vector2 velocity = player.Rb.linearVelocity;
         velocity.x = player.MovementInput.x * player.Speed;
@@ -74,7 +74,7 @@ namespace Mega_man.States
         }
 
         // 4) Check if grounded (landed)
-        if (IsGrounded(player))
+        if (velocity.y <= 0f && player.IsGrounded())
         {
             // Play the landing SFX
             SoundManager.Instance.PlaySound(player.LandSound);
@@ -88,19 +88,8 @@ namespace Mega_man.States
         }
     }
 
-    private bool IsGrounded(PlayerMovement player)
-    {
-        // Raycast approach instead of velocity check
-        Vector2 origin = player.Rb.position;
-        origin.y -= 0.7f;
-        float distance = 0.2f; // or read from a serialized field
-        LayerMask layers = player.groundLayers; // if you store it in PlayerMovement
+  
 
-        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, distance, layers);
-        Debug.DrawLine(origin, origin + Vector2.down * distance, Color.yellow);
-
-        return (hit.collider != null);
-    }
 
 }
 

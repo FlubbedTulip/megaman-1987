@@ -21,7 +21,8 @@ namespace Mega_man
         [Header("SFX")]
         [SerializeField] private AudioClip landSound;
         
-        [SerializeField] internal LayerMask groundLayers;
+        [SerializeField] private LayerMask groundLayers;
+        [SerializeField] private float groundCheckRadius = 0.02f;
 
        
 
@@ -139,8 +140,7 @@ namespace Mega_man
             JumpPressed = false;
             
             //print(_rb.linearVelocity);
-           // print(_rb.gravityScale);
-
+            print(_currentState);
         }
 
         private void UpdateFacingDirection()
@@ -227,5 +227,21 @@ namespace Mega_man
         {
             return _currentState == _inAirState;
         }
+
+        public bool IsGrounded()
+        {
+            Vector2 origin = Rb.position;
+            origin.y -= 0.7f;
+            float distance = groundCheckRadius; // or read from a serialized field
+            LayerMask layers = groundLayers; // if you store it in PlayerMovement
+
+            RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, distance, layers);
+            Debug.DrawLine(origin, origin + Vector2.down * distance, hit ? Color.red : Color.green);
+
+            return (hit.collider != null);
+
+
+        }
+
     }
 }
