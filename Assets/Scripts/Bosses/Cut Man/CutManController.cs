@@ -24,6 +24,9 @@ namespace Bosses.Cut_Man
         public float attackCooldown = 2.0f;
         public float preAttackDelay = 0.5f;
         public float attackRange = 5.0f;
+        
+        [Header("Contact Damage")]
+        [SerializeField] private float contactDamage = 2f;
     
         // Internal State Management
         private enum CutManState { Idle, Move, Jump, Attack }
@@ -257,6 +260,19 @@ namespace Bosses.Cut_Man
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
+            // 1) Check if we collided with Mega Man
+            if (collision.collider.CompareTag("Player"))
+            {
+                // 2) Get the player's HealthManager
+                HealthManager playerHealth = collision.collider.GetComponent<HealthManager>();
+                if (playerHealth != null)
+                {
+                    // 3) Apply damage
+                    playerHealth.TakeDamage(contactDamage);
+                }
+            }
+            
+            
             // If we land on ground while in Jump state, transition back to Move
             if (_currentState == CutManState.Jump && collision.collider.CompareTag("Ground"))
             {
