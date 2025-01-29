@@ -14,25 +14,26 @@ namespace Managers
 
         [Header("Music Clips")]
         [SerializeField] private AudioClip mainLevelMusic; // Music for the MainLevel
+        [SerializeField] private AudioClip bossMusic;
 
         [Header("Gameplay Settings")]
         [SerializeField] private int maxLives = 3;                // Total lives
-        [SerializeField] private float readyDelay = 3f;           // Seconds to show “READY” before spawning Mega Man
+        [SerializeField] private float readyDelay = 3f;      // Seconds to show “READY” before spawning Mega Man
         
-        [Header("Player prefab")]
-        private GameObject _playerObject;
 
         // Internal references
         private TextMeshProUGUI _screenMessage;
         private TextMeshProUGUI _score;
         private bool _showingReady;
         private float _readyTimer;
+        private GameObject _playerObject;
+        private GameObject _bossObject;
+        private GameObject _bossUIHealth;
 
         // Lives & state
         private int _currentLives;
         public bool IsGameWon { get; private set; }   // Used by End Scene to display Win/Lose
 
-        private bool _isPlayerSpawned;
         private bool _isGameOver;
         
 
@@ -64,12 +65,17 @@ namespace Managers
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
             GameEvents.PlayerDeath += PlayerDied;
+            GameEvents.BossStart += StartBossFight;
+            GameEvents.BossDeath += BossDefeated;
         }
+        
 
         private void OnDisable()
         {
             SceneManager.sceneLoaded -= OnSceneLoaded;
             GameEvents.PlayerDeath -= PlayerDied;
+            GameEvents.BossStart -= StartBossFight;
+            GameEvents.BossDeath -= BossDefeated;
         }
 
         
@@ -84,7 +90,6 @@ namespace Managers
                 // The EndScene will check IsGameWon to display “You Win” or “You Lose.”
                 // Any end-scene music or logic can go here if you wish.
             }
-            // If it's the Start scene, we typically do nothing until the user starts the game.
         }
 
         private void Update()
@@ -105,7 +110,6 @@ namespace Managers
 
                     // TODO: Spawn or enable Mega Man here
                     _playerObject.SetActive(true);
-                    _isPlayerSpawned = true;
                 }
             }
         }
@@ -118,14 +122,12 @@ namespace Managers
             _isGameOver = false;
             SceneManager.LoadScene(mainSceneName);
         }
-
-        /// <summary>
-        /// Set up MainLevel: play music, show “READY”, etc.
-        /// </summary>
+        
+        
+        // Set up MainLevel: play music, show “READY”, etc.
         private void SetupMainLevel()
         {
             _isGameOver = false;
-            _isPlayerSpawned = false;
             IsGameWon = false; // Reset previous state if any
 
             // Play the main level music
@@ -138,13 +140,10 @@ namespace Managers
             UpdateScoreUI();
         }
 
-        // ———————————————————————————————————————————
-        // LIVES / DEATH LOGIC
-        // ———————————————————————————————————————————
 
-        /// <summary>
-        /// Called when Mega Man dies once.
-        /// </summary>
+
+        
+        //Called when Mega Man dies once.
         private void PlayerDied()
         {
             if (_isGameOver) return;
@@ -164,15 +163,21 @@ namespace Managers
                 GoToEndScene();
             }
         }
-
-        /// <summary>
-        /// Called when the boss is defeated or the level is completed.
-        /// </summary>
-        public void BossDefeated()
+        
+        
+        private void StartBossFight()
+        {
+            SoundManager.Instance.StopMusic();
+            SoundManager.Instance.PlayMusic(bossMusic);
+            _bossObject.SetActive(true);
+            _bossUIHealth.SetActive(true);
+        }
+        
+        private void BossDefeated()
         {
             if (_isGameOver) return;
             _isGameOver = true;
-            IsGameWon = true; // We won
+            IsGameWon = true; 
             GoToEndScene();
         }
 
@@ -188,27 +193,24 @@ namespace Managers
             if (_score != null)
             {
                 // Format the score as 7 digits, padded with zeros.
-                // e.g. 42 -> "0000042"
                 _score.text = PlayerScore.ToString("D7"); 
             }
         }
 
 
-        // ———————————————————————————————————————————
-        // END SCENE
-        // ———————————————————————————————————————————
 
         private void GoToEndScene()
         {
             SceneManager.LoadScene(endSceneName);
         }
 
-        public void SetMainSceneReferences(TextMeshProUGUI scoreText, TextMeshProUGUI screenMessage, GameObject megaManPrefab)
+        public void SetMainSceneReferences(TextMeshProUGUI scoreText, TextMeshProUGUI screenMessage, GameObject megaManPrefab, GameObject bossPrefab, GameObject bossUIHealthPrefab)
         {
             _score = scoreText;
             _screenMessage = screenMessage;
             _playerObject = megaManPrefab;
-            
+            _bossObject = bossPrefab;
+            _bossUIHealth = bossUIHealthPrefab;
             SetupMainLevel();
         }
     }

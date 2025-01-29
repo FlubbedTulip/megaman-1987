@@ -9,5 +9,6 @@ namespace Events
         public static Action<Vector3> OnEnemyDied;
         public static Action PlayerDeath;
         public static Action BossDeath;
+        public static Action BossStart;
     }
 }

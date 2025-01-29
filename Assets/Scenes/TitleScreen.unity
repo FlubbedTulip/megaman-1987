@@ -172,6 +172,10 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 3743560755468760129, guid: aef1ad4fd54383640b3c47c05d33d71e, type: 3}
+      propertyPath: bossMusic
+      value: 
+      objectReference: {fileID: 8300000, guid: 6a3140c9a605cdd4b91edfb5b3d595ec, type: 3}
+    - target: {fileID: 3743560755468760129, guid: aef1ad4fd54383640b3c47c05d33d71e, type: 3}
       propertyPath: mainLevelMusic
       value: 
       objectReference: {fileID: 8300000, guid: 62787b6961337cf4583c26e1c526fb31, type: 3}
@@ -478,10 +482,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.2480315
-    y: 0.26170212
-    width: 0.503937
-    height: 0.47659573
+    x: 0.08169935
+    y: 0.023404256
+    width: 0.8366013
+    height: 0.95319146
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60

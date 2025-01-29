@@ -1,4 +1,5 @@
 using System.Collections;
+using Events;
 using Managers;
 using Mega_man;
 using Unity.Cinemachine;
@@ -10,9 +11,12 @@ namespace Camera
 {
     public class BossRoomTransition : MonoBehaviour
     {
+        private static readonly int IsRunning = Animator.StringToHash("IsRunning");
+
         [Header("Gate Settings")]
         [SerializeField] private GameObject[] doorRows;  // Each element is one horizontal row of tiles
         [SerializeField] private float rowDisableDelay = 0.2f; // time between disabling rows
+        [SerializeField] private bool isGateToBoss;
 
         [FormerlySerializedAs("lowerCamera")]
         [Header("Camera Settings")]
@@ -81,6 +85,11 @@ namespace Camera
 
             _isSwitching = false;
             ReEnableGate();
+
+            if (isGateToBoss)
+            {
+                GameEvents.BossStart.Invoke();
+            }
         }
 
         private IEnumerator OpenGateCoroutine()
@@ -101,13 +110,13 @@ namespace Camera
             Vector3 targetPos = startPos +  Vector3.right * 4f;
             while (elapsed < transitionDuration)
             {
-                player.Animator.SetBool("IsRunning", true);
+                player.Animator.SetBool(IsRunning, true);
                 float t = elapsed / transitionDuration;
                 player.transform.position = Vector3.Lerp(startPos, targetPos, t);
                 elapsed += Time.unscaledDeltaTime;
                 yield return null;
             }
-            player.Animator.SetBool("IsRunning", false);
+            player.Animator.SetBool(IsRunning, false);
 
             // Snap final
             player.transform.position = targetPos;
