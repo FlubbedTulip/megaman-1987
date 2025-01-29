@@ -58,6 +58,7 @@ namespace Bosses.Cut_Man
 
         private IEnumerator SetDeathAnimation()
         {
+            SoundManager.Instance.StopMusic();
             Time.timeScale = 0f;
             yield return new WaitForSecondsRealtime(1f);
             Time.timeScale = 1f;

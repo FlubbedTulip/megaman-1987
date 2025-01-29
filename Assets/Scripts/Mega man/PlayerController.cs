@@ -1,5 +1,6 @@
 using Events;
 using Interfaces;
+using Managers;
 using Mega_man.States;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -43,6 +44,7 @@ namespace Mega_man
         private PlayerAnimationController _animController;
         private Animator _animator;
         private Vector2 _lastLadderPosition;
+        private HealthManager _healthManager;
 
 
 
@@ -93,6 +95,8 @@ namespace Mega_man
             _playerShooting = GetComponent<PlayerShoot>();
             _animController = GetComponent<PlayerAnimationController>();
             _animator = GetComponent<Animator>();
+            _healthManager = GetComponent<HealthManager>();
+            
 
 
             // Input
@@ -114,12 +118,16 @@ namespace Mega_man
             _inputActions.Player.Jump.started   += OnJumpStarted;
             _inputActions.Player.Jump.canceled  += OnJumpCanceled;
             _inputActions.Player.Shoot.started += OnShootStarted;
+
+            _healthManager.OnDie += FreezeCharacter;
+            
             
 
 
             // Start in grounded
             TransitionToState(_groundedState);
         }
+        
 
         private void OnDisable()
         {
@@ -131,6 +139,9 @@ namespace Mega_man
             _inputActions.Player.Jump.started    -= OnJumpStarted;
             _inputActions.Player.Jump.canceled   -= OnJumpCanceled;
             _inputActions.Player.Shoot.started -= OnShootStarted;
+            
+            _healthManager.OnDie -= FreezeCharacter;
+
 
         }
 
@@ -235,17 +246,32 @@ namespace Mega_man
 
         public bool IsGrounded()
         {
-            Vector2 origin = Rb.position;
-            origin.y -= 0.7f;
-            float distance = groundCheckRadius; // or read from a serialized field
-            LayerMask layers = groundLayers; // if you store it in PlayerMovement
+            // 1) Circle center: slightly below the character’s pivot
+            Vector2 circleCenter = _rb.position + new Vector2(0f, -0.7f);
 
-            RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, distance, layers);
-            Debug.DrawLine(origin, origin + Vector2.down * distance, hit ? Color.red : Color.green);
+            // 2) Circle radius: a small value, like 0.1f
+            float circleRadius = 0.2f;
+            
+            // 4) Perform the Overlap
+            Collider2D hit = Physics2D.OverlapCircle(circleCenter, circleRadius, groundLayers);
 
-            return (hit.collider != null);
+            // (Optional) Draw a debug line or circle
+            Debug.DrawLine(circleCenter, circleCenter + Vector2.down * 0.3f, hit ? Color.green : Color.red);
+    
+            // 5) Return true if we collided with something in groundLayers
+            return (hit != null);
+        }
 
 
+        private void FreezeCharacter()
+        {
+            //Stop any movement
+            _rb.linearVelocity = Vector2.zero;
+            _rb.angularVelocity = 0f;
+            _rb.bodyType = RigidbodyType2D.Kinematic;
+            var col = GetComponent<Collider2D>();
+            if (col) col.enabled = false;
+            enabled = false;
         }
 
     }

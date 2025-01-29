@@ -66,8 +66,9 @@ namespace Mega_man.States
             player.GravityScale = player.NormalGravityScale;
             
             player.Shoot.OnShoot -= OnShootWhileClimbing;
-
-
+            
+            player.Animator.speed = 1f;
+            
             // Re-enable collision with the top edge
             if (_playerCollider && _topEdgeCollider)
             {
@@ -82,53 +83,58 @@ namespace Mega_man.States
         {
             var player = (PlayerController)context;
 
-            // If there's no ladder reference, or the player left the ladder area, fall
+            // 1) If there's no ladder reference, or the player left the ladder area, fall
             if (player.CurrentLadder == null || !player.IsNearLadder)
             {
                 player.TransitionToState(player.InAirState);
                 return;
             }
 
-            // Climb using vertical input
+            // 2) Prepare velocity (always lock horizontal while on ladder)
             Vector2 velocity = player.Rb.linearVelocity;
-            velocity.x = 0f; // Lock horizontal while climbing
-            velocity.y = player.MovementInput.y * _climbingSpeed;
-            
+            velocity.x = 0f;
+
+            // 3) If we are “shoot freezing,” override movement & animator speed
             if (_shootFreezeTime > 0f)
             {
-                // Decrease the lock timer & block movement
+                // Decrease the lock timer & block vertical movement
                 _shootFreezeTime -= Time.deltaTime;
                 velocity.y = 0f; // can't move up/down
+
+                // Keep animation playing (no freeze) so it doesn't get stuck
+                player.Animator.speed = 1f;
             }
             else
             {
                 // Normal climb speed
                 velocity.y = player.MovementInput.y * _climbingSpeed;
-            }
-            
-            player.Rb.linearVelocity = velocity;
-            
-            //Set animator speed based on movement
-            if (Mathf.Abs(player.MovementInput.y) < 0.01f 
-                && player.Rb.bodyType != RigidbodyType2D.Kinematic) // only freeze if you're truly not moving & not in manual kinematic mode
-            {
-                player.Animator.speed = 0f;
-            }
-            else
-            {
-                player.Animator.speed = 1f;
+
+                // -- Freeze or not freeze the animation based on vertical input
+                if (Mathf.Abs(player.MovementInput.y) < 0.01f 
+                    && player.Rb.bodyType != RigidbodyType2D.Kinematic)
+                {
+                    // If not moving, freeze anim
+                    player.Animator.speed = 0f;
+                }
+                else
+                {
+                    // If moving, animate at speed=1
+                    player.Animator.speed = 1f;
+                }
             }
 
-            // -- DETECT REACHING TOP OR BOTTOM --
+            player.Rb.linearVelocity = velocity;
+
+            // 4) Detect top/bottom of ladder
             CheckAndHandleLadderEdges(player);
 
-            // If the player presses jump, let's make them just fall
+            // 5) If the player presses jump, switch to in-air
             if (player.JumpPressed)
             {
-                // Switch to in-air: no actual jump impulse, just gravity
                 player.TransitionToState(player.InAirState);
             }
         }
+
 
         private void CheckAndHandleLadderEdges(PlayerController player)
         {
