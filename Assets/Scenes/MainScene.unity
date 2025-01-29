@@ -3438,9 +3438,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.10289389
+    x: 0.14035088
     y: 0
-    width: 0.79375285
+    width: 0.7187199
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -3471,7 +3471,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0050457716, y: 2.1279402, z: -10}
+  m_LocalPosition: {x: -0.016528368, y: 2.1279402, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17589,7 +17589,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.9765447, y: 0.7984609}
-  m_AnchoredPosition: {x: 3, y: -46.00009}
+  m_AnchoredPosition: {x: 3, y: -46.000122}
   m_SizeDelta: {x: 6, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1220340341

@@ -482,10 +482,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.05851979
-    y: 0.023404256
-    width: 0.88123924
-    height: 0.95319146
+    x: 0.19156627
+    y: 0.019313306
+    width: 0.6168675
+    height: 0.9613734
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -621,7 +621,7 @@ MonoBehaviour:
   blackSprite: {fileID: 942887247}
   mainLevelSceneName: MainScene
   flashInterval: 0.1
-  transitionDelay: 1
+  transitionDelay: 7
   levelSong: {fileID: 8300000, guid: 35ad36196064b7d469becee31a9ab30b, type: 3}
   levelStart: {fileID: 8300000, guid: 94abf1749f53c944395a8db26b683807, type: 3}
 --- !u!4 &1458235460
