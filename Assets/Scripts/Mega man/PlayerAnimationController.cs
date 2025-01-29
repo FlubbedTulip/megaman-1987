@@ -72,7 +72,7 @@ namespace Mega_man
             Time.timeScale = 1f;
             animator.SetTrigger(IsDead);
             OnDeathExplosion?.Invoke();
-            yield return new WaitForSecondsRealtime(2f);
+            yield return new WaitForSecondsRealtime(3f);
             gameObject.SetActive(false);
             GameEvents.PlayerDeath?.Invoke();
         }

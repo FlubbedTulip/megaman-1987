@@ -10,5 +10,6 @@ namespace Events
         public static Action PlayerDeath;
         public static Action BossDeath;
         public static Action BossStart;
+        public static Action BossWeaponReturned;
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using Events;
 using Managers;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -15,20 +17,17 @@ namespace Projectiles
         }
 
         [Header("Speed & Timing")]
-        public float travelSpeed = 10f;
-        public float rotationSpeed = 720f;
-        public float postTravelDuration = 0.5f;
+        [SerializeField] private float travelSpeed = 10f;
+        [SerializeField] private float rotationSpeed = 720f;
+        [SerializeField] private float postTravelDuration = 0.5f;
 
         [Header("Distances & Collision")]
-        public float reachDistance = 0.1f;
-        public float lifeTime = 5f;
+        [SerializeField] private float reachDistance = 0.1f;
+        [SerializeField] private float lifeTime = 5f;
 
-        [FormerlySerializedAs("_damage")]
         [Header("Damage Handling")]
         [SerializeField] private int damage = 10;
-
-        [Tooltip("Which layer belongs to the player? Used for OverlapCircle collision checks.")]
-        public LayerMask playerLayer;
+        [SerializeField] private LayerMask playerLayer;
 
         [Header("References (assigned at spawn)")]
         public Transform playerTransform;   // The player's position at firing
@@ -39,7 +38,7 @@ namespace Projectiles
         private CutterPhase _currentPhase = CutterPhase.TowardPlayer;
         private float _postTravelTimer;
         private Vector3 _initialPlayerPos;   // Snapshot of player's position on spawn
-
+        
         private void Start()
         {
             // Safety destruction
@@ -60,8 +59,6 @@ namespace Projectiles
             // Spin for visual flair
             transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
 
-            // Handle collision with the player each frame
-            CheckPlayerCollision();
 
             switch (_currentPhase)
             {
@@ -149,26 +146,12 @@ namespace Projectiles
             if (distToCutMan <= reachDistance)
             {
                 // Reached Cut Man: destroy or attach to Cut Man's sprite
+                GameEvents.BossWeaponReturned.Invoke();
                 Destroy(gameObject);
             }
         }
 
-        /// <summary>
-        /// Simple check if the Rolling Cutter hits the player (using OverlapCircle).
-        /// Replace with your custom collision system if desired.
-        /// </summary>
-        private void CheckPlayerCollision()
-        {
-            float radius = 0.2f; // Adjust as needed
-            Collider2D hit = Physics2D.OverlapCircle(transform.position, radius, playerLayer);
-            if (hit != null)
-            {
-                // Example: apply damage
-                // hit.GetComponent<PlayerHealth>()?.TakeDamage(damageToPlayer);
 
-                Destroy(gameObject);
-            }
-        }
 
         private void OnDrawGizmosSelected()
         {

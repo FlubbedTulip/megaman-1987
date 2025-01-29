@@ -151,7 +151,6 @@ namespace Mega_man
 
         private void UpdateFacingDirection()
         {
-            // if velocity.x < 0 => face left, if velocity.x > 0 => face right
             float vx = MovementInput.x;
             if (vx < -0.01f)  IsFacingRight = false;
             if (vx >  0.01f)  IsFacingRight = true;
